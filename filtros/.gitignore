@@ -1,0 +1,17 @@
+
+#OMITIR
+
+#carpetas con nombre
+#db/
+
+#no omitir los siguiente archivos con extension
+#!*.v
+#!*.tcl
+#!*.lyx
+#!*.cpp
+#!*.h
+#!*.sh
+#!*.tex
+
+#no omitir los siguiente archivos
+#!makefile

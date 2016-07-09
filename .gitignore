@@ -1,11 +1,22 @@
 
-#omitir todo
-#*
+#----------------------------- OMITIR
 
-#no omitir las carpetas
+#todo por defecto
+*
+
+#carpetas
+filtros/db
+filtros/simulation
+filtros/qsys
+
+#----------------------------- NO OMITIR
+
+#carpetas
 !*/
 
 #no omitir los siguiente archivos con extension
+#!*.v
+#!*.tcl
 #!*.lyx
 #!*.cpp
 #!*.h
@@ -14,3 +25,4 @@
 
 #no omitir los siguiente archivos
 #!makefile
+!.gitignore
