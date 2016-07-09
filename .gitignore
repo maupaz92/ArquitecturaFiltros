@@ -1,0 +1,16 @@
+
+#omitir todo
+#*
+
+#no omitir las carpetas
+!*/
+
+#no omitir los siguiente archivos con extension
+#!*.lyx
+#!*.cpp
+#!*.h
+#!*.sh
+#!*.tex
+
+#no omitir los siguiente archivos
+#!makefile
