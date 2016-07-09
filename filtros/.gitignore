@@ -1,17 +1,34 @@
 
-#OMITIR
+#IMPORTANTE: los nombres de las carpetas que dependen del archivo qsys deben de modificarse
+# al usar el archivo .gitignore para otro proyecto. Ya que puede que el nombre cambie y por ende
+# las reglas no serian validas.
 
-#carpetas con nombre
-#db/
+#----------------------------- OMITIR
 
-#no omitir los siguiente archivos con extension
-#!*.v
-#!*.tcl
-#!*.lyx
-#!*.cpp
-#!*.h
-#!*.sh
-#!*.tex
+#carpetas genericas para un proyecto quartus prime
+simulation/
 
-#no omitir los siguiente archivos
+#carpetas que dependen del nombre del archivo Qsys
+db/
+.qsys_edit/
+qsys/
+
+#----------------------------- NO OMITIR LOS SIGUIENTE ARCHIVOS CON EXTENSION
+#!*.
+
+!*.v
+!*.tcl
+
+!*.qpf
+!*.qsf
+!*.qsys
+!*.qws
+!*.sdc
+
+!*.hex
+!*.mif
+
+!*.txt
+
+#no omitir los siguiente archivos especificos
 #!makefile
