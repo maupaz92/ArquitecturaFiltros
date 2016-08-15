@@ -12,7 +12,8 @@ ademas del modulo FIFO donde se almacenaran los respectivos pixeles.
 */
 module buffer_unidad
 #(
-	parameter DATA_WIDTH = 8
+	parameter DATA_WIDTH = 8,
+	parameter BITS_FOR_DATA = 3
 )
 (
 	input clk,
@@ -20,11 +21,14 @@ module buffer_unidad
 	input [DATA_WIDTH-1:0] data_in,
 	input read_req,
 	input write_req,
-	input enable,
+	input write_en,
+	input read_en,
 	//
 	output [DATA_WIDTH-1:0] data_out,
 	output fifo_full,
-	output fifo_empty
+	output fifo_empty,
+	output [BITS_FOR_DATA-1:0] data_in_buffer,
+	output buffer_change
 );
 
 
@@ -32,62 +36,17 @@ module buffer_unidad
 
 //=========================================================================
 
-	 wire inter_read_req;
-	 wire inter_write_req;
-
-//
-//	 localparam 
-//		FSM_LIBRE	= 0,
-//		FSM_ACTIVA	= 1,
-//		FSM_NO_ACTIVA = 2;
-//		
-//
-////=========================================================================
-//	 reg [1:0] e_actual, e_siguiente;
-//	 // senal que en alto indica que el modulo actual esta activo, bajo inactivo
-//	 wire estado_buffer;
-//
-//		
-////==========================================================================	
-//// estado del registro
-//	always @(posedge clk) begin
-//		if(reset)
-//			e_actual <= FSM_LIBRE;
-//		else
-//			e_actual <= e_siguiente;
-//	end
-//
-////==========================================================================
-//// siguiente estado logico. Logica Moore
-//	always@(valor_activacion) begin		
-//		e_siguiente = e_actual;
-//		
-//		case(e_actual)
-//			FSM_LIBRE: begin
-//				if(valor_activacion == 2'b01)
-//					e_siguiente = FSM_ACTIVA;
-//				else if(valor_activacion == 2'b10)
-//					e_siguiente = FSM_NO_ACTIVA;
-//			end
-//			FSM_ACTIVA: begin				
-//			end
-//			FSM_NO_ACTIVA: begin
-//			end
-//			default: begin
-//				e_siguiente = FSM_LIBRE;
-//			end
-//			
-//		endcase
-//	end
-//	
-//
-//	
-////==========================================================================
-//
-//	assign estado_buffer = (e_actual == FSM_ACTIVA);
+	wire inter_read_req;
+	wire inter_write_req;
+	wire [BITS_FOR_DATA-1:0] data_on_buffer;
+	wire [BITS_FOR_DATA-1:0] previous_data_on_buffer;
 	
-	assign inter_read_req = enable & read_req;
-	assign inter_write_req = enable & write_req;
+	
+	assign inter_read_req = read_en & read_req;
+	assign inter_write_req = write_en & write_req;
+	assign data_in_buffer = data_on_buffer;
+	assign buffer_change = ~(data_on_buffer == previous_data_on_buffer);
+	
 
 /*
  *
@@ -107,9 +66,20 @@ para el procesamiento
 		.empty (fifo_empty),
 		.full (fifo_full),
 		.q (data_out),
-		.usedw ()
+		.usedw (data_on_buffer)
 		);
 
+		
+		
+	FlipFlopD_Habilitado registro_cambio (
+		 .clk(clk), 
+		 .reset(reset), 
+		 .habilitador(1'b1), 
+		 .datos_entrada(data_on_buffer),
+		 .datos_salida(previous_data_on_buffer)
+		);
+		
+	defparam registro_cambio.BITS_EN_REGISTRO = BITS_FOR_DATA;
 	
 	
 
