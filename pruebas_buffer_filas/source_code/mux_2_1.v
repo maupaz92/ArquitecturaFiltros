@@ -1,6 +1,11 @@
 `timescale 1ns / 1ps
 
+/*
 
+Implementacion de un multiplexor 2 entradas - 1 una salida. El ancho del bus de datos
+que se permiten es configurable segun el valor que haya en el parametro.
+
+*/
 
 module mux_2_1(
 	entrada_1,

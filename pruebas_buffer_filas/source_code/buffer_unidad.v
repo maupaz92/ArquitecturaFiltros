@@ -2,12 +2,17 @@
 
 /*
 
-Unidad mas pequena del buffer total. El sistema tendra a disposicion
-varias unidades de este modulo para dar facilidad sobre el ancho de las 
-imagenes a procesar.
+Modulo que funciona como un buffer FIFO. Tiene una interfaz de funciones adicional
+a la de la instancia FIFO comun. Tanto las lecturas como escrituras deben ser habilitadas.
 
-El modulo cuenta con una FSM para controlar su estado (activo o inactivo), 
-ademas del modulo FIFO donde se almacenaran los respectivos pixeles.
+Tiene una signal de salida que indica cuando el buffer ha cambiado, es decir se han agregado
+o sacado datos del mismo. Dicha signal es alta en el ciclo siguiente que se efectuo
+una lectura o escritura, ya que se compara el valor anterior con el actual. Se utiliza
+un fliflop para guardar el valor anterior y compararlo con el actual.
+
+El ancho de los datos del buffer es configurable, pero depende del IP core de altera que se usa,
+si se ocupara cambiar a mas datos o mayor ancho del bus de datos, hay que cambiar el IP core y
+cambiar la instancia, y modificar los parametros del modulo.
 
 */
 module buffer_unidad
@@ -70,7 +75,15 @@ para el procesamiento
 		);
 
 		
-		
+/*
+ *
+==========================================================================
+CONTEXTO: FF que guarda la cantidad de datos en el buffer en cada ciclo de reloj.
+Se usa para corrobar cuando el fifo ha sufrido una lectura o escritura, ya que en
+cada pulso de reloj, tambien se compara la cantidad de valores actuales en el fifo
+con los valores que habia anteriormente.
+*
+*/		
 	FlipFlopD_Habilitado registro_cambio (
 		 .clk(clk), 
 		 .reset(reset), 

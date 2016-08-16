@@ -1,8 +1,17 @@
 /*
 
-Modulo que presenta la interfaz simple de una cola fifo, 
-pero ademas puede ser programada en caliente para aumentar
-o disminuir el tamano de la cola
+MOdulo que instancia varios modulos 'buffer_unidad', y tiene la logica
+necesaria para poder encender/apagar los buffer y trabajar con los que se 
+desee. De esta forma se simula un buffer FIFO de tamano variable, ya que 
+depende la cantidad de unidad de buffer que tenga encendidas. Dicha configuracion
+puede ser modificada en caliente, no es necesario re-configurar el sistema.
+
+Antes de cada modulo buffer hay un mux que funciona para direccionar los datos
+que entren a los buffers. Ya que cuando hayan ingresos se tiene que agregar al 
+buffer que este menos lleno, y cuando haya una lectura, los datos de los buffers
+anteriores deben de pasar a los buffers siguientes, para que sigan el orden
+de FIFO.
+
 
 */
 
@@ -136,7 +145,20 @@ module buffer_fifo_configurable
 	end
 	
 	
-	//==========================================================================	
+	//==========================================================================
+	/*
+	segun el llenado de los buffers, asi sera seleccionado el buffer al cual ira un push.
+	'buffer_fullnes' tiene un bit por cada buffer, y cada bit es alto cuando dicho buffer
+	esta lleno. conforme se van llenando los buffers del 1 al 4, asi cambiara la habilitacion
+	para ingresar datos a los diferentes buffers.
+	
+	hay un caso especial, cuando ocurre un pop, dicha signal llega a todos los subbuffers activos,
+	si hay salida de datos de los mismos, indica que 'buffer_fullness' sera cero, y el push que
+	se debe de hacer siguiente a un pop debe tener una habilitacion de buffer especial. De esta forma
+	un pulso de reloj despues de un pop, se hace un shift right de la signal de activacion, en conjunto
+	con la logica de cambio del buffer anterior, esto determina cual de los buffers despues de un 
+	pop, tendra habilitado la signal de push
+	*/
 	always@(*) begin
 		case(buffer_fullness)
 			0:
@@ -288,7 +310,19 @@ CONTEXTO:
  *
 FUNCION: 
 ==========================================================================
-CONTEXTO: 
+CONTEXTO: Tanto la escritura y lectura de datos en los buffers debe ser habilitada.
+Esto porque depende de cuales estan activos o no. La escritura 'push' se maneja mediante
+la signal 'write_buf_enable' la cual segun el estado de 'llenura' de los buffers indica
+cual de ellos es el que puede recibir datos.
+
+La habilitacion de lectura siempre llega a todos los que esten activos, sin embargo el 
+problema se genera cuando los datos de buffers anteriores al 1 deben de escribirse en
+los siguientes. De esta forma debe verificarse si es necesario que haya un push luego
+de cada pop. Para esto se utiliza el pusl push_intern que se activa luego de cada pop, y 
+ademas la signal 'bufferX_data_change' que indica si el buffer anterior cambio de estado.
+De esta forma si hubo un pop, en el estado siguiente buffer1 se dara cuenta si buffer2 tiene
+menos datos, si es asi, habilitara el push automatico para guardar los datos que genera
+el buffer anterior, y asi sucesivamente para los demas.
 *
 */
 	buffer_unidad buffer_1
@@ -313,12 +347,14 @@ CONTEXTO:
 //==========================================================================	
 	assign no_config = (e_actual == E_ESPERA_CONFIG);
 
+	// alto cuando los buffer que esten activados esten llenos
 	assign buffer_full = (subbuffer_activation == buffer_fullness);
 
 	// la seleccion de los datos de los mux cambian cuando dicho estado se activa
+	// ya que es posible que datos de buffers anteriores tengan que escribirse en los siguientes
 	assign data_selection = (e_actual_minor1 == E_RETORNAR_DATOS);
 
-	// cuando se cambia al estado de retorno, se debe hacer un push interno
+	// cuando se cambia al estado E_RETORNO, se debe hacer un push interno
 	assign push_intern = data_selection;
 
 
