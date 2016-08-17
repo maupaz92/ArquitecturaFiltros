@@ -1,0 +1,116 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 1991-2015 Altera Corporation. All rights reserved.
+# Your use of Altera Corporation's design tools, logic functions 
+# and other software and tools, and its AMPP partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Altera Program License 
+# Subscription Agreement, the Altera Quartus Prime License Agreement,
+# the Altera MegaCore Function License Agreement, or other 
+# applicable license agreement, including, without limitation, 
+# that your use is for the sole purpose of programming logic 
+# devices manufactured by Altera and sold by Altera or its 
+# authorized distributors.  Please refer to the applicable 
+# agreement for further details.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus Prime
+# Version 15.1.0 Build 185 10/21/2015 SJ Lite Edition
+# Date created = 21:16:57  April 24, 2016
+#
+# -------------------------------------------------------------------------- #
+#
+# Notes:
+#
+# 1) The default values for assignments are stored in the file:
+#		prueba_3_assignment_defaults.qdf
+#    If this file doesn't exist, see file:
+#		assignment_defaults.qdf
+#
+# 2) Altera recommends that you do not modify this file. This
+#    file is updated automatically by the Quartus Prime software
+#    and any changes you make may be lost or overwritten.
+#
+# -------------------------------------------------------------------------- #
+
+
+set_global_assignment -name FAMILY "Cyclone IV GX"
+set_global_assignment -name DEVICE EP4CGX150DF31C7
+set_global_assignment -name TOP_LEVEL_ENTITY prueba_3
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 15.1.0
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "21:16:57  APRIL 24, 2016"
+set_global_assignment -name LAST_QUARTUS_VERSION 15.1.0
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
+set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
+set_global_assignment -name ERROR_CHECK_FREQUENCY_DIVISOR 1
+set_global_assignment -name NOMINAL_CORE_SUPPLY_VOLTAGE 1.2V
+set_global_assignment -name EDA_SIMULATION_TOOL "ModelSim-Altera (Verilog)"
+set_global_assignment -name EDA_OUTPUT_DATA_FORMAT "VERILOG HDL" -section_id eda_simulation
+set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
+set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
+set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
+set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
+set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+set_global_assignment -name SEARCH_PATH "c:\\users\\mauricio paz\\downloads\\codigoverilog\\quartus\\prueba3\\qsys\\synthesis\\submodules"
+set_global_assignment -name SEARCH_PATH "c:\\users\\mauricio paz\\downloads\\codigoverilog\\quartus\\prueba3\\qsys\\synthesis"
+set_global_assignment -name SEARCH_PATH "c:\\users\\mauricio paz\\downloads\\codigoverilog\\quartus\\prueba3"
+
+
+
+
+set_global_assignment -name ACTIVE_SERIAL_CLOCK FREQ_40MHZ
+set_global_assignment -name USE_CONFIGURATION_DEVICE OFF
+set_instance_assignment -name CLOCK_SETTINGS refclk -to refclk
+
+set_location_assignment PIN_AC2 -to rx_in0
+set_location_assignment PIN_AB4 -to tx_out0
+set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to rx_in0
+set_instance_assignment -name IO_STANDARD "1.5-V PCML" -to tx_out0
+
+set_instance_assignment -name IO_STANDARD "2.5 V" -to pcie_rstn
+set_location_assignment PIN_A7 -to pcie_rstn
+set_instance_assignment -name IO_STANDARD "2.5 V" -to local_rstn_ext -disable
+set_location_assignment PIN_C12 -to local_rstn_ext -disable
+
+set_instance_assignment -name IO_STANDARD HCSL -to refclk
+set_location_assignment PIN_V15 -to refclk
+
+set_instance_assignment -name IO_STANDARD HCSL -to "refclk(n)"
+set_location_assignment PIN_W15 -to "refclk(n)"
+
+
+set_location_assignment PIN_AJ16 -to free_50MHz
+set_instance_assignment -name IO_STANDARD LVDS -to free_50MHz
+set_location_assignment PIN_AK16 -to "free_50MHz(n)"
+
+set_instance_assignment -name IO_STANDARD "2.5 V" -to leds[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to leds[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to leds[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to leds[3]
+set_location_assignment PIN_AA25 -to leds[0]
+set_location_assignment PIN_AB25 -to leds[1]
+set_location_assignment PIN_F27 -to leds[2]
+set_location_assignment PIN_F26 -to leds[3]
+
+
+
+set_instance_assignment -name IO_STANDARD "2.5 V" -to local_rstn_ext -disable
+set_location_assignment PIN_C12 -to local_rstn_ext -disable
+set_instance_assignment -name IO_STANDARD "2.5 V" -to botones[0]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to botones[1]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to botones[2]
+set_location_assignment PIN_AA26 -to botones[0]
+set_location_assignment PIN_AE25 -to botones[1]
+set_location_assignment PIN_AF30 -to botones[2]
+set_instance_assignment -name IO_STANDARD "2.5 V" -to botones[3]
+set_location_assignment PIN_AE26 -to botones[3]
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name HEX_FILE memoria_ram.hex
+set_global_assignment -name QIP_FILE IP_cores/gpll_i.qip
+set_global_assignment -name QIP_FILE IP_cores/altgxb_reconfig.qip
+set_global_assignment -name QIP_FILE qsys/synthesis/qsys.qip
+set_global_assignment -name VERILOG_FILE prueba_3.v
