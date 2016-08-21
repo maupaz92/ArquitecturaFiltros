@@ -85,7 +85,8 @@ module prueba_3(
 		.pcie_ip_powerdown_gxb_powerdown            (),
 		
 		.pcie_ip_reconfig_gxbclk_clk                (reconfig_gxbclk_clk),
-		.pcie_ip_fixedclk_clk                       (fixedclk)
+		.pcie_ip_fixedclk_clk                       (fixedclk),
+		.master_prueba_mem_control_externo_iniciar_prueba (~botones[0])
 		
 	);  
 

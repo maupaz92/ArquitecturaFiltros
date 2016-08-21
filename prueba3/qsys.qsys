@@ -9,6 +9,14 @@
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
+   element interfaz_mem_puerto1
+   {
+      datum _sortIndex
+      {
+         value = "4";
+         type = "int";
+      }
+   }
    element led
    {
       datum _sortIndex
@@ -28,6 +36,14 @@
       {
          value = "1";
          type = "boolean";
+      }
+   }
+   element master_prueba_mem
+   {
+      datum _sortIndex
+      {
+         value = "5";
+         type = "int";
       }
    }
    element onchip_memory
@@ -98,6 +114,14 @@
          type = "long";
       }
    }
+   element qsys
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone IV GX";
+         type = "String";
+      }
+   }
    element sgdma
    {
       datum _sortIndex
@@ -148,6 +172,11 @@
  <interface
    name="led_external_connection"
    internal="led.external_connection"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="master_prueba_mem_control_externo"
+   internal="master_prueba_mem.control_externo"
    type="conduit"
    dir="end" />
  <interface
@@ -220,6 +249,14 @@
    internal="pcie_ip.tx_out"
    type="conduit"
    dir="end" />
+ <module
+   name="interfaz_mem_puerto1"
+   kind="avalon_mm_master"
+   version="1.0"
+   enabled="1">
+  <parameter name="ADDRESS_BITS" value="18" />
+  <parameter name="DATA_BITS" value="64" />
+ </module>
  <module name="led" kind="altera_avalon_pio" version="15.1" enabled="1">
   <parameter name="bitClearingEdgeCapReg" value="false" />
   <parameter name="bitModifyingOutReg" value="false" />
@@ -233,6 +270,14 @@
   <parameter name="simDoTestBenchWiring" value="false" />
   <parameter name="simDrivenValue" value="0" />
   <parameter name="width" value="4" />
+ </module>
+ <module
+   name="master_prueba_mem"
+   kind="master_prueba_mem"
+   version="1.0"
+   enabled="1">
+  <parameter name="ADDRESS_BITS" value="18" />
+  <parameter name="DATA_BITS" value="64" />
  </module>
  <module
    name="onchip_memory"
@@ -401,6 +446,15 @@
   <parameter name="transferMode" value="MEMORY_TO_MEMORY" />
   <parameter name="writeBurstcountWidth" value="4" />
  </module>
+ <connection
+   kind="avalon"
+   version="15.1"
+   start="interfaz_mem_puerto1.avalon_master"
+   end="onchip_memory.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x00020000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
  <connection kind="avalon" version="15.1" start="pcie_ip.bar1_0" end="led.s1">
   <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x0000" />
@@ -492,6 +546,27 @@
    start="pcie_ip.pcie_core_clk"
    end="onchip_memory.clk2" />
  <connection
+   kind="clock"
+   version="15.1"
+   start="pcie_ip.pcie_core_clk"
+   end="interfaz_mem_puerto1.clock" />
+ <connection
+   kind="clock"
+   version="15.1"
+   start="pcie_ip.pcie_core_clk"
+   end="master_prueba_mem.clock" />
+ <connection
+   kind="conduit"
+   version="15.1"
+   start="master_prueba_mem.control_master"
+   end="interfaz_mem_puerto1.control">
+  <parameter name="endPort" value="" />
+  <parameter name="endPortLSB" value="0" />
+  <parameter name="startPort" value="" />
+  <parameter name="startPortLSB" value="0" />
+  <parameter name="width" value="0" />
+ </connection>
+ <connection
    kind="interrupt"
    version="15.1"
    start="pcie_ip.rxm_irq"
@@ -508,6 +583,16 @@
    version="15.1"
    start="pcie_ip.pcie_core_reset"
    end="led.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="pcie_ip.pcie_core_reset"
+   end="interfaz_mem_puerto1.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="pcie_ip.pcie_core_reset"
+   end="master_prueba_mem.reset" />
  <connection
    kind="reset"
    version="15.1"
