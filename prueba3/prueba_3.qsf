@@ -108,6 +108,9 @@ set_location_assignment PIN_AE25 -to botones[1]
 set_location_assignment PIN_AF30 -to botones[2]
 set_instance_assignment -name IO_STANDARD "2.5 V" -to botones[3]
 set_location_assignment PIN_AE26 -to botones[3]
+set_global_assignment -name VERILOG_FILE source_code/registro_sumador_dinamico.v
+set_global_assignment -name VERILOG_FILE source_code/mascara_filtro.v
+set_global_assignment -name HEX_FILE memoria_interna.hex
 set_global_assignment -name VERILOG_FILE source_code/FlipFlopD_Habilitado.v
 set_global_assignment -name VERILOG_FILE source_code/registro_sumador.v
 set_global_assignment -name HEX_FILE memoria_ram.hex
@@ -115,8 +118,7 @@ set_global_assignment -name QIP_FILE IP_cores/gpll_i.qip
 set_global_assignment -name QIP_FILE IP_cores/altgxb_reconfig.qip
 set_global_assignment -name QIP_FILE qsys/synthesis/qsys.qip
 set_global_assignment -name VERILOG_FILE prueba_3.v
-set_global_assignment -name VERILOG_FILE source_code/FSM_prueba_escritura_mem.v
-set_global_assignment -name VERILOG_FILE source_code/TEST_FSM_prueba_escritura_mem.v
 set_global_assignment -name VERILOG_FILE source_code/control_mascara.v
 set_global_assignment -name VERILOG_FILE source_code/control_mascara_TEST.v
+set_global_assignment -name VERILOG_FILE source_code/indice_mascara.v
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

@@ -7,7 +7,8 @@ module control_mascara
 #(
 	parameter BITS_BUS_DATOS = 21,
 	parameter BITS_BUS_DIRECCION = 11,
-	parameter BITS_DIRECCION_MEM = 10
+	parameter BITS_DIRECCION_MEM = 10,
+	parameter BITS_MASCARA = 3
 )
 (
 	input clk,
@@ -19,17 +20,15 @@ module control_mascara
 	input [BITS_BUS_DIRECCION-1:0] direccion_registros,
 	input [BITS_BUS_DATOS-1:0] datos_registros,
 	input habilitacion_registros,
-	
-	//salidas para leer los datos de la memoria
-	//output leer_mem,
-	output [BITS_DIRECCION_MEM-1:0] direccion_mem
+	//
+	output [BITS_DIRECCION_MEM-1:0] direccion_mem_inicio_mascara,
+	output [BITS_MASCARA-1:0] tamano_mascara 
 );
 
-	localparam BITS_MASCARA = 3;
+	
 
 //==========================================================================		
-	// valor que define la diagonal de la mascara del filtro
-	wire [BITS_MASCARA-1:0] tamano_mascara;
+	
 	wire [BITS_DIRECCION_MEM-1:0] direccion_mem_actual;
 	wire [BITS_DIRECCION_MEM-1:0] direccion_mem_anterior;
 	wire cambio_direccion_mem;
@@ -104,7 +103,7 @@ module control_mascara
 //==========================================================================
 
 	//salida del modulo
-	assign direccion_mem = direccion_mem_actual;
+	assign direccion_mem_inicio_mascara = direccion_mem_actual;
 
 	// senal que en alto indica que hubo un cambio en la direccion de memoria
 	// para recuperar los valores de la mascara, su activacion indica

@@ -54,6 +54,8 @@ module FlipFlopD_Habilitado(
 	 
 	 parameter BITS_EN_REGISTRO = 1;
 	 parameter VALOR_EN_RESET = 0;
+	 
+	 
 	 input clk;
     input reset;
     input habilitador;

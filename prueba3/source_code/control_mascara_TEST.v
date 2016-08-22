@@ -2,7 +2,7 @@
 `timescale 1ns / 1ps
 
 
-module TEST_control_mascara;
+module control_mascara_TEST;
 
 	// Inputs
 	reg clk;
