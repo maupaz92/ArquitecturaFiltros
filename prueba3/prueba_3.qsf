@@ -121,3 +121,4 @@ set_global_assignment -name VERILOG_FILE source_code/mascara_filtro_TEST.v
 set_global_assignment -name VERILOG_FILE source_code/FlipFlopD_Habilitado.v
 set_global_assignment -name VERILOG_FILE source_code/registro_sumador.v
 set_global_assignment -name VERILOG_FILE source_code/registro_sumador_dinamico.v
+set_global_assignment -name VERILOG_FILE source_code/control_ventana.v

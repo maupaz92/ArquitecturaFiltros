@@ -290,8 +290,8 @@ module mascara_filtro
 	FlipFlopD_Habilitado ff_1_grupo_1(
 		 .clk(clk),
 		 .reset(reset),
-		 .habilitador(habilitacion_registros[0] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[9:0]),
+		 .habilitador(	[0] && hablitacion_escritura_grupos),
+		 .datos_entrada(datos_memoria[29:20]),
 		 .datos_salida(valor_mascara_1)
 		 );	
 	
@@ -316,7 +316,7 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[0] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[29:20]),
+		 .datos_entrada(datos_memoria[9:0]),
 		 .datos_salida(valor_mascara_3)
 		 );	
 	
@@ -328,8 +328,8 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[1] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[9:0]),
-		 .datos_salida(valor_mascara_4)
+		 .datos_entrada(datos_memoria[29:20]),
+		 .datos_salida(valor_mascara_6)
 		 );	
 	
 	defparam ff_1_grupo_2.BITS_EN_REGISTRO = BITS_ELEMENTO_MASCARA	;
@@ -341,7 +341,7 @@ module mascara_filtro
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[1] && hablitacion_escritura_grupos),
 		 .datos_entrada(datos_memoria[19:10]),
-		 .datos_salida(valor_mascara_5)
+		 .datos_salida(valor_mascara_7)
 		 );	
 	
 	defparam ff_2_grupo_2.BITS_EN_REGISTRO = BITS_ELEMENTO_MASCARA;
@@ -351,8 +351,8 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[1] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[29:20]),
-		 .datos_salida(valor_mascara_6)
+		 .datos_entrada(datos_memoria[9:0]),
+		 .datos_salida(valor_mascara_8)
 		 );	
 	
 	defparam ff_3_grupo_2.BITS_EN_REGISTRO = BITS_ELEMENTO_MASCARA	;
@@ -363,8 +363,8 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[2] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[9:0]),
-		 .datos_salida(valor_mascara_7)
+		 .datos_entrada(datos_memoria[29:20]),
+		 .datos_salida(valor_mascara_11)
 		 );	
 	
 	defparam ff_1_grupo_3.BITS_EN_REGISTRO = BITS_ELEMENTO_MASCARA	;
@@ -376,7 +376,7 @@ module mascara_filtro
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[2] && hablitacion_escritura_grupos),
 		 .datos_entrada(datos_memoria[19:10]),
-		 .datos_salida(valor_mascara_8)
+		 .datos_salida(valor_mascara_12)
 		 );	
 	
 	defparam ff_2_grupo_3.BITS_EN_REGISTRO = BITS_ELEMENTO_MASCARA;
@@ -386,8 +386,8 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[2] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[29:20]),
-		 .datos_salida(valor_mascara_9)
+		 .datos_entrada(datos_memoria[9:0]),
+		 .datos_salida(valor_mascara_13)
 		 );	
 	
 	defparam ff_3_grupo_3.BITS_EN_REGISTRO = BITS_ELEMENTO_MASCARA;		
@@ -397,8 +397,8 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[3] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[9:0]),
-		 .datos_salida(valor_mascara_10)
+		 .datos_entrada(datos_memoria[29:20]),
+		 .datos_salida(valor_mascara_4)
 		 );	
 	
 	defparam ff_1_grupo_4.BITS_EN_REGISTRO = BITS_ELEMENTO_MASCARA;	
@@ -410,7 +410,7 @@ module mascara_filtro
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[3] && hablitacion_escritura_grupos),
 		 .datos_entrada(datos_memoria[19:10]),
-		 .datos_salida(valor_mascara_11)
+		 .datos_salida(valor_mascara_5)
 		 );	
 	
 	defparam ff_2_grupo_4.BITS_EN_REGISTRO = BITS_ELEMENTO_MASCARA;
@@ -420,8 +420,8 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[3] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[29:20]),
-		 .datos_salida(valor_mascara_12)
+		 .datos_entrada(datos_memoria[9:0]),
+		 .datos_salida(valor_mascara_9)
 		 );	
 	
 	defparam ff_3_grupo_4.BITS_EN_REGISTRO = BITS_ELEMENTO_MASCARA;		
@@ -431,8 +431,8 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[4] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[9:0]),
-		 .datos_salida(valor_mascara_13)
+		 .datos_entrada(datos_memoria[29:20]),
+		 .datos_salida(valor_mascara_10)
 		 );	
 	
 	defparam ff_1_grupo_5.BITS_EN_REGISTRO = BITS_ELEMENTO_MASCARA	;
@@ -454,7 +454,7 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[4] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[29:20]),
+		 .datos_entrada(datos_memoria[9:0]),
 		 .datos_salida(valor_mascara_15)
 		 );	
 	
@@ -466,7 +466,7 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[5] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[9:0]),
+		 .datos_entrada(datos_memoria[29:20]),
 		 .datos_salida(valor_mascara_16)
 		 );	
 	
@@ -489,7 +489,7 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[5] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[29:20]),
+		 .datos_entrada(datos_memoria[9:0]),
 		 .datos_salida(valor_mascara_18)
 		 );	
 	
@@ -501,7 +501,7 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[6] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[9:0]),
+		 .datos_entrada(datos_memoria[29:20]),
 		 .datos_salida(valor_mascara_19)
 		 );	
 	
@@ -524,7 +524,7 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[6] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[29:20]),
+		 .datos_entrada(datos_memoria[9:0]),
 		 .datos_salida(valor_mascara_21)
 		 );	
 	
@@ -536,7 +536,7 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[7] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[9:0]),
+		 .datos_entrada(datos_memoria[29:20]),
 		 .datos_salida(valor_mascara_22)
 		 );	
 	
@@ -559,7 +559,7 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[7] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[29:20]),
+		 .datos_entrada(datos_memoria[9:0]),
 		 .datos_salida(valor_mascara_24)
 		 );	
 	
@@ -571,7 +571,7 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[8] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[9:0]),
+		 .datos_entrada(datos_memoria[29:20]),
 		 .datos_salida(valor_mascara_25)
 		 );	
 	
@@ -594,7 +594,7 @@ module mascara_filtro
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_registros[8] && hablitacion_escritura_grupos),
-		 .datos_entrada(datos_memoria[29:20]),
+		 .datos_entrada(datos_memoria[9:0]),
 		 .datos_salida(valor_mascara_27)
 		 );	
 	

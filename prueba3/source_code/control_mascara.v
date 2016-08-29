@@ -1,12 +1,17 @@
 /*
 
+Las instrucciones que recibe el sistema son divididas en dos partes, 
+una parte para definir a que modulo van los datos de la instruccion, la
+otra son los datos.
+
+La seleccion 
 
 */
 
 module control_mascara
 #(
-	parameter BITS_BUS_DATOS = 21,
-	parameter BITS_BUS_DIRECCION = 11,
+	parameter BITS_BUS_DATOS_INSTR = 21,
+	parameter BITS_BUS_DIRECCION_INSTR = 11,
 	parameter BITS_DIRECCION_MEM = 10,
 	parameter BITS_MASCARA = 3
 )
@@ -17,8 +22,8 @@ module control_mascara
 	//entradas que trabajan con los registros internos del modulo
 	//los cuales se pueden modificar de acuerdo al tipo de instruccion
 	//que se este recibiendo
-	input [BITS_BUS_DIRECCION-1:0] direccion_registros,
-	input [BITS_BUS_DATOS-1:0] datos_registros,
+	input [BITS_BUS_DIRECCION_INSTR-1:0] direccion_registros,
+	input [BITS_BUS_DATOS_INSTR-1:0] datos_registros,
 	input habilitacion_registros,
 	//
 	output [BITS_DIRECCION_MEM-1:0] direccion_mem_inicio_mascara,
