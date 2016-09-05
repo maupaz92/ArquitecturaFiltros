@@ -250,7 +250,7 @@ module ventana_pixeles #(
 		 .clk(clk), 
 		 .reset(reset), 
 		 .habilitador(), 
-		 .datos_entrada(),
+		 .datos_entrada(data_buff_4),
 		 .datos_salida(pixel_20)
 		);
 		

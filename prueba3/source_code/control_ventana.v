@@ -5,7 +5,7 @@ module control_ventana
 #(
 	parameter BITS_BUS_DATOS_INSTR = 21,
 	parameter BITS_BUS_DIRECCION_INSTR = 11, 
-	parameter BITS_BUFFERS_IMAGEN = 2;
+	parameter BITS_BUFFERS_IMAGEN = 3;
 )
 (
 	input clk,
@@ -74,12 +74,14 @@ module control_ventana
 	
 	
 //==========================================================================		
-	// registro que guarda la cantidad de buffers que se van a ocupar 
+	// registro que guarda la cantidad de buffers internos del buffer configurable
+	// que se van a usar. Por ejemplo 2 buffer para imagen de 512 columnas
+	// o 4 buffers internos para imagen de 1024 columnas 
 	FlipFlopD_Habilitado ff_buffers_internos(
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_interna_modulos[0]),
-		 .datos_entrada(datos_registros[BITS_COLUMNAS_IMAGEN-1:0]),
+		 .datos_entrada(datos_registros[BITS_BUFFERS_IMAGEN-1:0]),
 		 .datos_salida(cantidad_buffers_internos)
 		 );	
 	
@@ -89,9 +91,6 @@ module control_ventana
 	
 
 /*
-registro para definir columnas de la imagen: para cantidad de buffers
-
-registro para definir filas de la imagen: para cantidad de lecturas a memoria
 
 como inicio?????
 
