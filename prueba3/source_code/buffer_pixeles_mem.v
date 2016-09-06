@@ -30,14 +30,19 @@ module buffer_pixeles_mem #(
 	localparam BITS_SELECC_REGS = 3;
 	
 	localparam 
-		E_GRUPO_1	= 0,
-		E_GRUPO_2	= 1;
+		E_INICIO		= 0,
+		E_GRUPO_1	= 1,
+		E_GRUPO_2	= 2,
+		E_ESPERA_1	= 3,
+		E_ESPERA_2	= 4;
 
 //=========================================================================
 
 
-	reg e_actual, e_siguiente;
+	reg [2:0] e_actual, e_siguiente;
 	
+	
+	// senales para dirigir los valores de los registros
 	wire [PIXEL_BITS-1:0] reg_pix_1_value;
 	wire [PIXEL_BITS-1:0] reg_pix_2_value;
 	wire [PIXEL_BITS-1:0] reg_pix_3_value;
@@ -47,16 +52,25 @@ module buffer_pixeles_mem #(
 	wire [PIXEL_BITS-1:0] reg_pix_7_value;
 	wire [PIXEL_BITS-1:0] reg_pix_8_value;
 	
+	// senal para seleccionar cual registro sera la salida del mux
 	wire [BITS_SELECC_REGS-1:0] seleccion_regs;
 	
+	// senales para habilitar el grupo de registros
 	wire habilitar_primer_grupo;
 	wire habilitar_segundo_grupo;
+	
+	
+	wire grupo_uno_leido;
+	wire grupo_dos_leido;
+	wire buffer_lleno;
+	
+	
 		
 //==========================================================================	
 // estado del registro
 	always @(posedge clk) begin
 		if(reset)
-			e_actual <= E_GRUPO_1;
+			e_actual <= E_INICIO;
 		else
 			e_actual <= e_siguiente;
 	end
@@ -65,17 +79,29 @@ module buffer_pixeles_mem #(
 // siguiente estado logico. Logica Moore
 	always@(*) begin		
 		e_siguiente = e_actual;
-		case(e_actual)			
+		case(e_actual)
+			E_INICIO: begin
+				if(save_mem_data)
+					e_siguiente = E_GRUPO_2;
+			end
 			E_GRUPO_1: begin
 				if(save_mem_data)
+					e_siguiente = E_ESPERA_2;
+			end
+			E_ESPERA_2: begin
+				if(grupo_dos_leido)
 					e_siguiente = E_GRUPO_2;
 			end
 			E_GRUPO_2: begin
 				if(save_mem_data)
+					e_siguiente = E_ESPERA_1;
+			end
+			E_ESPERA_1: begin
+				if(grupo_uno_leido)
 					e_siguiente = E_GRUPO_1;
 			end
 			default: begin
-				e_siguiente = E_GRUPO_1;
+				e_siguiente = E_INICIO;
 			end
 			
 		endcase
@@ -83,7 +109,8 @@ module buffer_pixeles_mem #(
 	
 //=========================================================================
 	
-	
+	// case que hace funcion de mux, segun el valor de seleccion
+	// asi sera el numero de registro que sera la salida 
 	always@(*) begin
 		case(seleccion_regs)
 			0:
@@ -107,7 +134,18 @@ module buffer_pixeles_mem #(
 		endcase
 	end
 
+
+
+
+//=========================================================================
+
+	assign habilitar_primer_grupo = (e_actual == E_GRUPO_1) || (e_actual == E_INICIO);
+	assign habilitar_segundo_grupo = (e_actual == E_GRUPO_2);	
 	
+	assign grupo_uno_leido = (seleccion_regs >= 4) ? 1 : 0;
+	assign grupo_dos_leido = ~grupo_uno_leido;
+	
+	assign buffer_lleno = (e_actual == E_ESPERA_1) || (e_actual == E_ESPERA_2);
 	
 	
 /*
@@ -130,7 +168,8 @@ para que sea la salida
 	
 	
 
-//=========================================================================
+// ++++++++++++++++++++++++++++ de aqui para abajo solo registros 		
+	
 
 
 	FlipFlopD_Habilitado reg_pix_1 (
@@ -234,11 +273,6 @@ para que sea la salida
 		
 	defparam reg_pix_8.BITS_EN_REGISTRO = PIXEL_BITS;
 
-
-//=========================================================================
-
-	assign habilitar_primer_grupo = (e_actual == E_GRUPO_1);
-	assign habilitar_segundo_grupo = (e_actual == E_GRUPO_2);
 
 
 
