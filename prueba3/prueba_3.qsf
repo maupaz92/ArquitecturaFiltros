@@ -129,3 +129,4 @@ set_global_assignment -name VERILOG_FILE source_code/buffer_pixeles_mem.v
 set_global_assignment -name VERILOG_FILE source_code/buffer_pixeles_mem_TEST.v
 set_global_assignment -name VERILOG_FILE source_code/control_ventana.v
 set_global_assignment -name VERILOG_FILE source_code/ventana_pixeles.v
+set_global_assignment -name VERILOG_FILE source_code/sumador_restador.v
