@@ -13,6 +13,8 @@ module buffer_pixeles_mem_TEST;
 
 	//outputs
 	wire [7:0] pixel;
+	wire space_available;
+	wire data_available;
 	
 
 	buffer_pixeles_mem buffer_pixeles_mem_inst
@@ -22,7 +24,9 @@ module buffer_pixeles_mem_TEST;
 		.memory_data(memory_data),
 		.read_pixel(read_pixel),
 		.save_mem_data(save_mem_data),
-		.pixel(pixel)
+		.pixel(pixel),
+		.space_available(space_available),
+		.data_available(data_available)
 	);
 	
 	localparam T = 20;
@@ -54,6 +58,23 @@ module buffer_pixeles_mem_TEST;
 		save_mem_data = 0;
 		
 		memory_data = 32'habcdef77;
+		
+		//
+		repeat(2) @(posedge clk);
+		save_mem_data = 1;
+		@(posedge clk);
+		save_mem_data = 0;
+		
+		memory_data = 32'h12345678;
+		
+		//
+		repeat(2) @(posedge clk);
+		save_mem_data = 1;
+		@(posedge clk);
+		save_mem_data = 0;
+		
+		
+		memory_data = 32'h87654321;
 		
 		//
 		repeat(2) @(posedge clk);

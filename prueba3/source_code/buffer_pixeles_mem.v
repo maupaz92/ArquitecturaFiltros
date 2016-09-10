@@ -7,6 +7,11 @@ pixel es un byte. POr lo que se debe de hacer una especie de buffer
 donde se le provea una interface al modulo que consume pixeles, uno por
 uno, no de 4 en 4 como vienen de memoria
 
+hay 4 grupos de registros para guardar 16 pixeles. la entrada 'save_mem_data'
+indica que se guarde el valor de la entrada 'memory_data' en el siguiente registro
+que este disponible.
+
+
 se va a asumir que el orden de los pixeles es de MSB a LSB.
 
 */
@@ -23,7 +28,7 @@ module buffer_pixeles_mem #(
 	input save_mem_data,
 	// 
 	output reg [PIXEL_BITS-1:0] pixel,
-	output buffer_full,
+	output space_available,
 	output data_available 
 );
 
@@ -44,11 +49,21 @@ module buffer_pixeles_mem #(
 
 //=========================================================================
 
-
+	// registros para la maquina de estados
 	reg [3:0] e_actual, e_siguiente;
 	
+	// cada bit de la senal indica un grupo de registros
+	// en alto cada bit indica que dicho grupo de registros
+	// tiene datos escritos
+	reg [3:0] activacion_grupo;
 	
-	// senales para dirigir los valores de los registros
+	
+	// senales que llevan el indice del registro actual
+	// que esta disponible para ser leido
+	wire [BITS_SELECC_REGS-1:0] seleccion_regs;
+	wire [BITS_SELECC_REGS-1:0] seleccion_regs_anterior;
+	
+	// senales para mantener los valores de los registros
 	wire [PIXEL_BITS-1:0] reg_pix_1_value;
 	wire [PIXEL_BITS-1:0] reg_pix_2_value;
 	wire [PIXEL_BITS-1:0] reg_pix_3_value;
@@ -67,32 +82,28 @@ module buffer_pixeles_mem #(
 	wire [PIXEL_BITS-1:0] reg_pix_16_value;
 	
 	
-	// senales para habilitar el grupo de registros
-	wire habilitar_primer_grupo;
-	wire habilitar_segundo_grupo;
-	wire habilitar_tercer_grupo;
-	wire habilitar_cuarto_grupo;
+	// senales para habilitar la escritura a cada 
+	// grupo de registros segun el estado actual de la FSM
+	wire habilitar_escritura_grupo1;
+	wire habilitar_escritura_grupo2;
+	wire habilitar_escritura_grupo3;
+	wire habilitar_escritura_grupo4;
 	
-	
-	wire activar_grupo1;
-	wire activar_grupo2;
-	wire activar_grupo3;
-	wire activar_grupo4;
-	
+	// senales para definir que los datos disponibles de un grupo
+	// han sido leidos, es decir pasan a disponibles
 	wire desactivar_grupo1;
 	wire desactivar_grupo2;
 	wire desactivar_grupo3;
 	wire desactivar_grupo4;
 	
-	wire estado_grupo1;
-	wire estado_grupo2;
-	wire estado_grupo3;
-	wire estado_grupo4;
-	
+	// cada bit de la senal indica un grupo
+	// en alto hay datos por leer en el grupo
+	// en bajo, los registros del grupo estan 
+	// disponibles para escritura
+	wire [3:0] estado_grupos;
 	
 	
 //==========================================================================	
-// estado del registro
 	always @(posedge clk) begin
 		if(reset)
 			e_actual <= E_INICIO;
@@ -104,41 +115,52 @@ module buffer_pixeles_mem #(
 // siguiente estado logico. Logica Moore
 	always@(*) begin		
 		e_siguiente = e_actual;
+		activacion_grupo = 4'b0000;
 		case(e_actual)
 			E_INICIO: begin
-				if(save_mem_data)
+				if(save_mem_data) begin
 					e_siguiente = E_GRUPO_2;
+					activacion_grupo = 4'b0001;
+				end
 			end
 			E_GRUPO_1: begin
-				if(save_mem_data)
+				if(save_mem_data) begin
 					e_siguiente = E_ESPERA_2;
+					activacion_grupo = 4'b0001;
+				end
 			end
 			E_ESPERA_2: begin
-				if(grupo_dos_leido)
+				if(~estado_grupos[1])
 					e_siguiente = E_GRUPO_2;
 			end
 			E_GRUPO_2: begin
-				if(save_mem_data)
-					e_siguiente = E_ESPERA_1;
+				if(save_mem_data) begin
+					e_siguiente = E_ESPERA_3;
+					activacion_grupo = 4'b0010;
+				end
 			end
 			E_ESPERA_3: begin
-				if(grupo_uno_leido)
-					e_siguiente = E_GRUPO_1;
+				if(~estado_grupos[2])
+					e_siguiente = E_GRUPO_3;
 			end
 			E_GRUPO_3: begin
-				if(save_mem_data)
-					e_siguiente = E_ESPERA_1;
+				if(save_mem_data) begin
+					e_siguiente = E_ESPERA_4;
+					activacion_grupo = 4'b0100;
+				end
 			end
 			E_ESPERA_4: begin
-				if(grupo_uno_leido)
-					e_siguiente = E_GRUPO_1;
+				if(~estado_grupos[3])
+					e_siguiente = E_GRUPO_4;
 			end
 			E_GRUPO_4: begin
-				if(save_mem_data)
+				if(save_mem_data) begin
 					e_siguiente = E_ESPERA_1;
+					activacion_grupo = 4'b1000;
+				end
 			end
 			E_ESPERA_1: begin
-				if(grupo_uno_leido)
+				if(~estado_grupos[0])
 					e_siguiente = E_GRUPO_1;
 			end
 			default: begin
@@ -171,83 +193,133 @@ module buffer_pixeles_mem #(
 			7:
 				pixel = reg_pix_8_value;
 			8:
-				pixel = reg_pix_1_value;
+				pixel = reg_pix_9_value;
 			9:
-				pixel = reg_pix_2_value;
+				pixel = reg_pix_10_value;
 			10:
-				pixel = reg_pix_3_value;
+				pixel = reg_pix_11_value;
 			11:
-				pixel = reg_pix_4_value;
+				pixel = reg_pix_12_value;
 			12:
-				pixel = reg_pix_5_value;
+				pixel = reg_pix_13_value;
 			13:
-				pixel = reg_pix_6_value;
+				pixel = reg_pix_14_value;
 			14:
-				pixel = reg_pix_7_value;
+				pixel = reg_pix_15_value;
 			15:
-				pixel = reg_pix_8_value;
+				pixel = reg_pix_16_value;
 			default:
 				pixel = reg_pix_1_value;
 		endcase
 	end
 
 
-
-//=========================================================================	
-	registro_sumador ff_estado_grupo1 (
+	
+/*
+ *
+==========================================================================
+CONTEXTO: modulo que indica cual es el valor de los registros que se va a presentar
+en la salida. Cada vez que se aumente el valor, se va a habilitar otro registro
+para que sea la salida
+*
+*/
+	registro_sumador habilitador_registros (
 	 .clk(clk), 
 	 .reset(reset),	 
-	 .sumar(activar_grupo1 || desactivar_grupo1),
-	 .resultado(estado_grupo1)
+	 .sumar(read_pixel),
+	 .resultado(seleccion_regs)
 	);
 	
-	defparam ff_estado_grupo1.CANTIDAD_SUMA = 1;
-	defparam ff_estado_grupo1.BITS_DATOS = 1;	
+	defparam habilitador_registros.CANTIDAD_SUMA = 1;
+	defparam habilitador_registros.BITS_DATOS = BITS_SELECC_REGS;	
+	
+
+//=========================================================================
+	// modulo que guarda en cada pulso el valor actual 
+	// del registro que se esta habilitando, para fines
+	// de comparar cual es el actual y cual fue el anterior
+	FlipFlopD_Habilitado registro_anterior (
+		 .clk(clk), 
+		 .reset(reset), 
+		 .habilitador(1'b1), 
+		 .datos_entrada(seleccion_regs),
+		 .datos_salida(seleccion_regs_anterior)
+		);
+		
+	defparam reg_pix_2.BITS_EN_REGISTRO = BITS_SELECC_REGS;
+
+/*
+hay 4 registros de un pixel que indican el estado de los 4 grupos de registros.
+0 indica que esta disponible, osea que fue leido o que no ha sido escrito, 1
+indica que esta ocupado, que sus valores no han sido leidos por completo
+
+con estos 4 valores se controla si es necesario ingresar mas datos o hay 
+que esperar a que hayan lecturas y se desocupen espacios para ingresar mas 
+datos
+*/	
+
+//=========================================================================	
+	registro_sumador sumador_estado_grupo1 (
+	 .clk(clk), 
+	 .reset(reset),	 
+	 .sumar(activacion_grupo[0] || desactivar_grupo1),
+	 .resultado(estado_grupos[0])
+	);
+	
+	defparam sumador_estado_grupo1.CANTIDAD_SUMA = 1;
+	defparam sumador_estado_grupo1.BITS_DATOS = 1;	
 
 	
 //=========================================================================	
-	registro_sumador ff_estado_grupo2 (
+	registro_sumador sumador_estado_grupo2 (
 	 .clk(clk), 
 	 .reset(reset),	 
-	 .sumar(activar_grupo2 || desactivar_grupo2),
-	 .resultado(estado_grupo2)
+	 .sumar(activacion_grupo[1] || desactivar_grupo2),
+	 .resultado(estado_grupos[1])
 	);
 	
-	defparam ff_estado_grupo2.CANTIDAD_SUMA = 1;
-	defparam ff_estado_grupo2.BITS_DATOS = 1;
+	defparam sumador_estado_grupo2.CANTIDAD_SUMA = 1;
+	defparam sumador_estado_grupo2.BITS_DATOS = 1;
 
 	
 //=========================================================================	
-	registro_sumador ff_estado_grupo3 (
+	registro_sumador sumador_estado_grupo3 (
 	 .clk(clk), 
 	 .reset(reset),	 
-	 .sumar(activar_grupo3 || desactivar_grupo3),
-	 .resultado(estado_grupo3)
+	 .sumar(activacion_grupo[2] || desactivar_grupo3),
+	 .resultado(estado_grupos[2])
 	);
 	
-	defparam ff_estado_grupo3.CANTIDAD_SUMA = 1;
-	defparam ff_estado_grupo3.BITS_DATOS = 1;
+	defparam sumador_estado_grupo3.CANTIDAD_SUMA = 1;
+	defparam sumador_estado_grupo3.BITS_DATOS = 1;
 
 	
 //=========================================================================	
-	registro_sumador ff_estado_grupo4 (
+	registro_sumador sumador_estado_grupo4 (
 	 .clk(clk), 
 	 .reset(reset),	 
-	 .sumar(activar_grupo4 || desactivar_grupo4),
-	 .resultado(estado_grupo4)
+	 .sumar(activacion_grupo[3] || desactivar_grupo4),
+	 .resultado(estado_grupos[3])
 	);
 	
-	defparam ff_estado_grupo4.CANTIDAD_SUMA = 1;
-	defparam ff_estado_grupo4.BITS_DATOS = 1;
+	defparam sumador_estado_grupo4.CANTIDAD_SUMA = 1;
+	defparam sumador_estado_grupo4.BITS_DATOS = 1;
 
 
 //=========================================================================
 
-		assign activar_grupo1 = (e_siguiente == E_GRUPO_2);
+	assign habilitar_escritura_grupo1 	= (e_actual == E_GRUPO_1);
+	assign habilitar_escritura_grupo2 	= (e_actual == E_GRUPO_2);
+	assign habilitar_escritura_grupo3 	= (e_actual == E_GRUPO_3);
+	assign habilitar_escritura_grupo4 	= (e_actual == E_GRUPO_4);
 
+	assign desactivar_grupo1 = (seleccion_regs == 4) && (seleccion_regs_anterior == 3);
+	assign desactivar_grupo2 = (seleccion_regs == 8) && (seleccion_regs_anterior == 7);
+	assign desactivar_grupo3 = (seleccion_regs == 12) && (seleccion_regs_anterior == 11);
+	assign desactivar_grupo4 = (seleccion_regs == 0) && (seleccion_regs_anterior == 15);
 	
-	
-	
+	assign space_available = estado_grupos != 7;	
+	assign data_available = estado_grupos != 0;
 //=========================================================================
 	
 // ++++++++++++++++++++++++++++ de aqui para abajo solo registros 		
