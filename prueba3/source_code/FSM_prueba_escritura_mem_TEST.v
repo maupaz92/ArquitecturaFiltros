@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 
-module TEST_FSM_prueba_escritura_mem;
+module FSM_prueba_escritura_mem_TEST;
 
 	// Inputs
 	reg clk;

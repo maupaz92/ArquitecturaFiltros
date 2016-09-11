@@ -4,11 +4,17 @@
 */
 
 module ventana_pixeles #(
-	parameter BITS_PIXEL = 8	
+	parameter BITS_PIXEL = 8,
+	// cantidad de bits para definir los buffers a utilizar
+	parameter BITS_BUFFERS = 3;
+	
 )
 (
 	input clk,
 	input reset,
+	input [BITS_BUFFERS-1:0] cantidad_buffers_internos,
+	input data_available,
+	input iniciar,
 	// 
 	output [BITS_PIXEL-1:0] pixel_1,
 	output [BITS_PIXEL-1:0] pixel_2,

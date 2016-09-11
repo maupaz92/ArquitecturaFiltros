@@ -246,7 +246,7 @@ para que sea la salida
 		 .datos_salida(seleccion_regs_anterior)
 		);
 		
-	defparam reg_pix_2.BITS_EN_REGISTRO = BITS_SELECC_REGS;
+	defparam registro_anterior.BITS_EN_REGISTRO = BITS_SELECC_REGS;
 
 /*
 hay 4 registros de un pixel que indican el estado de los 4 grupos de registros.
@@ -308,7 +308,7 @@ datos
 
 //=========================================================================
 
-	assign habilitar_escritura_grupo1 	= (e_actual == E_GRUPO_1);
+	assign habilitar_escritura_grupo1 	= (e_actual == E_GRUPO_1) || (e_actual == E_INICIO);
 	assign habilitar_escritura_grupo2 	= (e_actual == E_GRUPO_2);
 	assign habilitar_escritura_grupo3 	= (e_actual == E_GRUPO_3);
 	assign habilitar_escritura_grupo4 	= (e_actual == E_GRUPO_4);
@@ -318,7 +318,7 @@ datos
 	assign desactivar_grupo3 = (seleccion_regs == 12) && (seleccion_regs_anterior == 11);
 	assign desactivar_grupo4 = (seleccion_regs == 0) && (seleccion_regs_anterior == 15);
 	
-	assign space_available = estado_grupos != 7;	
+	assign space_available = estado_grupos != 15;	
 	assign data_available = estado_grupos != 0;
 //=========================================================================
 	
@@ -327,7 +327,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_1 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_primer_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo1 && save_mem_data), 
 		 .datos_entrada(memory_data[31:24]),
 		 .datos_salida(reg_pix_1_value)
 		);
@@ -340,7 +340,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_2 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_primer_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo1 && save_mem_data), 
 		 .datos_entrada(memory_data[23:16]),
 		 .datos_salida(reg_pix_2_value)
 		);
@@ -353,7 +353,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_3 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_primer_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo1 && save_mem_data), 
 		 .datos_entrada(memory_data[15:8]),
 		 .datos_salida(reg_pix_3_value)
 		);
@@ -366,7 +366,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_4 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_primer_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo1 && save_mem_data), 
 		 .datos_entrada(memory_data[7:0]),
 		 .datos_salida(reg_pix_4_value)
 		);
@@ -379,7 +379,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_5 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_segundo_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo2 && save_mem_data), 
 		 .datos_entrada(memory_data[31:24]),
 		 .datos_salida(reg_pix_5_value)
 		);
@@ -392,7 +392,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_6 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_segundo_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo2 && save_mem_data), 
 		 .datos_entrada(memory_data[23:16]),
 		 .datos_salida(reg_pix_6_value)
 		);
@@ -405,7 +405,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_7 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_segundo_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo2 && save_mem_data), 
 		 .datos_entrada(memory_data[15:8]),
 		 .datos_salida(reg_pix_7_value)
 		);
@@ -418,7 +418,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_8 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_segundo_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo2 && save_mem_data), 
 		 .datos_entrada(memory_data[7:0]),
 		 .datos_salida(reg_pix_8_value)
 		);
@@ -432,7 +432,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_9 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_primer_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo3 && save_mem_data), 
 		 .datos_entrada(memory_data[31:24]),
 		 .datos_salida(reg_pix_9_value)
 		);
@@ -445,7 +445,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_10 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_tercer_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo3 && save_mem_data), 
 		 .datos_entrada(memory_data[23:16]),
 		 .datos_salida(reg_pix_10_value)
 		);
@@ -458,7 +458,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_11 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_tercer_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo3 && save_mem_data), 
 		 .datos_entrada(memory_data[15:8]),
 		 .datos_salida(reg_pix_11_value)
 		);
@@ -471,7 +471,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_12 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_tercer_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo3 && save_mem_data), 
 		 .datos_entrada(memory_data[7:0]),
 		 .datos_salida(reg_pix_12_value)
 		);
@@ -484,7 +484,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_13 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_segundo_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo4 && save_mem_data), 
 		 .datos_entrada(memory_data[31:24]),
 		 .datos_salida(reg_pix_13_value)
 		);
@@ -497,7 +497,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_14 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_cuarto_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo4 && save_mem_data), 
 		 .datos_entrada(memory_data[23:16]),
 		 .datos_salida(reg_pix_14_value)
 		);
@@ -510,7 +510,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_15 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_cuarto_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo4 && save_mem_data), 
 		 .datos_entrada(memory_data[15:8]),
 		 .datos_salida(reg_pix_15_value)
 		);
@@ -523,7 +523,7 @@ datos
 	FlipFlopD_Habilitado reg_pix_16 (
 		 .clk(clk), 
 		 .reset(reset), 
-		 .habilitador(habilitar_cuarto_grupo && save_mem_data), 
+		 .habilitador(habilitar_escritura_grupo4 && save_mem_data), 
 		 .datos_entrada(memory_data[7:0]),
 		 .datos_salida(reg_pix_16_value)
 		);

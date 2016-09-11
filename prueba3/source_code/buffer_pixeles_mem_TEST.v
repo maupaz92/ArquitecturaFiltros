@@ -59,43 +59,47 @@ module buffer_pixeles_mem_TEST;
 		
 		memory_data = 32'habcdef77;
 		
-		//
-		repeat(2) @(posedge clk);
-		save_mem_data = 1;
-		@(posedge clk);
-		save_mem_data = 0;
-		
-		memory_data = 32'h12345678;
-		
-		//
-		repeat(2) @(posedge clk);
-		save_mem_data = 1;
-		@(posedge clk);
-		save_mem_data = 0;
-		
-		
-		memory_data = 32'h87654321;
-		
-		//
-		repeat(2) @(posedge clk);
-		save_mem_data = 1;
-		@(posedge clk);
-		save_mem_data = 0;
-		
-		//
 		repeat(2) @(posedge clk);
 		read_pixel = 1;
 		@(posedge clk);
 		
-		//
-		repeat(2) @(posedge clk);
-		
-		@(posedge clk);
-		
-		//
-		repeat(2) @(posedge clk);
-		
-		@(posedge clk);
+//		//
+//		repeat(2) @(posedge clk);
+//		save_mem_data = 1;
+//		@(posedge clk);
+//		save_mem_data = 0;
+//		
+//		memory_data = 32'h12345678;
+//		
+//		//
+//		repeat(2) @(posedge clk);
+//		save_mem_data = 1;
+//		@(posedge clk);
+//		save_mem_data = 0;
+//		
+//		
+//		memory_data = 32'h87654321;
+//		
+//		//
+//		repeat(2) @(posedge clk);
+//		save_mem_data = 1;
+//		@(posedge clk);
+//		save_mem_data = 0;
+//		
+//		//
+//		repeat(2) @(posedge clk);
+//		read_pixel = 1;
+//		@(posedge clk);
+//		
+//		//
+//		repeat(2) @(posedge clk);
+//		
+//		@(posedge clk);
+//		
+//		//
+//		repeat(2) @(posedge clk);
+//		
+//		@(posedge clk);
 		
 
 		

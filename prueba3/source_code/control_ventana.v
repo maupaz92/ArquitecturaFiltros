@@ -5,7 +5,8 @@ module control_ventana
 #(
 	parameter BITS_BUS_DATOS_INSTR = 21,
 	parameter BITS_BUS_DIRECCION_INSTR = 11, 
-	parameter BITS_BUFFERS_IMAGEN = 3;
+	// cantidad de bits para definir los buffers a utilizar
+	parameter BITS_BUFFERS = 3;
 )
 (
 	input clk,
@@ -22,7 +23,7 @@ module control_ventana
 	//
 	output [BITS_BUS_DATOS_INSTR-1:0] direccion_mem_inicio_imagen,
 	output [BITS_BUS_DATOS_INSTR-1:0]  cantidad_lecturas_mem,
-	output [BITS_BUFFERS_IMAGEN-1:0] cantidad_buffers_internos 
+	output [BITS_BUFFERS-1:0] cantidad_buffers_internos 
 );
 
 	
@@ -81,12 +82,12 @@ module control_ventana
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_interna_modulos[0]),
-		 .datos_entrada(datos_registros[BITS_BUFFERS_IMAGEN-1:0]),
+		 .datos_entrada(datos_registros[BITS_BUFFERS-1:0]),
 		 .datos_salida(cantidad_buffers_internos)
 		 );	
 	
 	// la cantidad de bits debe de definirse mejor
-	defparam ff_columnas_imagen.BITS_EN_REGISTRO = BITS_BUFFERS_IMAGEN;	
+	defparam ff_columnas_imagen.BITS_EN_REGISTRO = BITS_BUFFERS;	
 	
 	
 

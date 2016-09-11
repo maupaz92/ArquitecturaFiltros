@@ -204,7 +204,9 @@ module mascara_filtro
 
 
 //==========================================================================	
-	
+	// modulo que guarda la direccion de lectura original de memoria
+	// y cuando se le indica, suma cierta cantidad para actualizar la proxima
+	// direccion 
 	registro_sumador_dinamico direccion_memoria (
 	 .clk(clk), 
 	 .reset(reset),
