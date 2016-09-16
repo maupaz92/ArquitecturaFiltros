@@ -9,6 +9,9 @@ module convolucion_mascara_ventana #(
 	parameter BITS_PRODUCTO_SUMA = 11
 )
 (
+	input ventana_pixeles_lista,
+	input [BITS_ELEMENTO_MASCARA-1:0] denominador,
+	
 	input signed [BITS_ELEMENTO_MASCARA-1:0] mask_value_1,
 	input signed [BITS_ELEMENTO_MASCARA-1:0] mask_value_2,
 	input signed [BITS_ELEMENTO_MASCARA-1:0] mask_value_3,
@@ -34,8 +37,6 @@ module convolucion_mascara_ventana #(
 	input signed [BITS_ELEMENTO_MASCARA-1:0] mask_value_23,
 	input signed [BITS_ELEMENTO_MASCARA-1:0] mask_value_24,
 	input signed [BITS_ELEMENTO_MASCARA-1:0] mask_value_25,
-	
-	input [BITS_ELEMENTO_MASCARA-1:0] denominador,
 	
 	
 	input [BITS_PIXEL-1:0] pixel_value_1,
@@ -66,13 +67,14 @@ module convolucion_mascara_ventana #(
 	
 	
 	// 
-	output [BITS_PIXEL-1:0] 
+	output [BITS_PIXEL-1:0] pixel_resultado,
+	output pixel_calculado
 );
 
 //=========================================================================
 
 
-	
+	wire habilitar_multiplicadores;
 
 
 	wire [BITS_PIXEL-1:0] cociente_1;
@@ -113,6 +115,80 @@ module convolucion_mascara_ventana #(
 	wire [BITS_PRODUCTO_SUMA-1:0] resultado_producto_suma_8;
 	wire [BITS_PRODUCTO_SUMA-1:0] resultado_producto_suma_9;
 	
+	wire signed [BITS_PRODUCTO_SUMA-1:0] resultado_suma_1;
+	wire signed [BITS_PRODUCTO_SUMA-1:0] resultado_suma_2;
+	wire signed [BITS_PRODUCTO_SUMA-1:0] resultado_suma_3;
+	wire signed [BITS_PRODUCTO_SUMA-1:0] resultado_suma_4;
+	wire signed [BITS_PRODUCTO_SUMA-1:0] resultado_suma_5;
+	wire signed [BITS_PRODUCTO_SUMA-1:0] resultado_suma_6;
+	wire signed [BITS_PRODUCTO_SUMA-1:0] resultado_suma_7;
+	wire signed [BITS_PRODUCTO_SUMA-1:0] resultado_suma_8;
+
+
+
+//=========================================================================
+	 reg [1:0] e_actual, e_siguiente;
+	 
+	 localparam 
+		E_INICIO				= 0,
+		E_ACTIVAR_MULT		= 1,
+		E_RESULTADOS_MULT	= 2,
+		E_PIXEL_LISTO		= 3;
+		
+//==========================================================================	
+// estado del registro
+	always @(posedge clk) begin
+		if(reset)
+			e_actual <= E_INICIO;
+		else
+			e_actual <= e_siguiente;
+	end
+
+//==========================================================================
+// siguiente estado logico. Logica Moore
+	always@(*) begin		
+		e_siguiente = e_actual;
+		case(e_actual)			
+			E_INICIO: begin
+				if(ventana_pixeles_lista)
+					e_siguiente = E_ACTIVAR_MULT;
+			end
+			E_ACTIVAR_MULT: begin
+				e_siguiente = E_RESULTADOS_MULT;
+			end
+			E_RESULTADOS_MULT: begin
+				e_siguiente = E_PIXEL_LISTO;
+			end
+			E_PIXEL_LISTO: begin
+				e_siguiente = E_INICIO;
+			end			
+			default: begin
+				e_siguiente = E_INICIO;
+			end
+			
+		endcase
+	end		
+
+//=========================================================================	
+
+	assign habilitar_multiplicadores = (e_actual == E_ACTIVAR_MULT);
+	assign pixel_calculado = (e_actual == E_PIXEL_LISTO);
+
+	assign pixel_resultado = resultado_suma_8[BITS_PIXEL-1:0];
+	
+//*********************************************************************************
+//*********************************************************************************
+//*********************************************************************************
+//*********************************************************************************
+//*********************************************************************************
+//*********************************************************************************
+
+//					inicio de las definiciones de los modulos para hacer el calculo
+//					del pixel, nada de logica
+//*********************************************************************************
+//*********************************************************************************
+//*********************************************************************************
+//*********************************************************************************
 	
 
 //=========================================================================	
@@ -346,7 +422,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_1),
 		.datab_1(mask_value_2),
 		.datab_2(mask_value_3),
-		.ena0(),
+		.ena0(habilitar_multiplicadores),
 		.result(resultado_producto_suma_1)
 	);
 
@@ -361,7 +437,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_4),
 		.datab_1(mask_value_5),
 		.datab_2(mask_value_6),
-		.ena0(),
+		.ena0(habilitar_multiplicadores),
 		.result(resultado_producto_suma_2)
 	);
 	
@@ -376,7 +452,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_7),
 		.datab_1(mask_value_8),
 		.datab_2(mask_value_9),
-		.ena0(),
+		.ena0(habilitar_multiplicadores),
 		.result(resultado_producto_suma_3)
 	);
 	
@@ -392,7 +468,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_10),
 		.datab_1(mask_value_11),
 		.datab_2(mask_value_12),
-		.ena0(),
+		.ena0(habilitar_multiplicadores),
 		.result(resultado_producto_suma_4)
 	);
 	
@@ -407,7 +483,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_13),
 		.datab_1(mask_value_14),
 		.datab_2(mask_value_15),
-		.ena0(),
+		.ena0(habilitar_multiplicadores),
 		.result(resultado_producto_suma_5)
 	);
 	
@@ -423,7 +499,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_16),
 		.datab_1(mask_value_17),
 		.datab_2(mask_value_18),
-		.ena0(),
+		.ena0(habilitar_multiplicadores),
 		.result(resultado_producto_suma_6)
 	);
 	
@@ -439,7 +515,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_19),
 		.datab_1(mask_value_20),
 		.datab_2(mask_value_21),
-		.ena0(),
+		.ena0(habilitar_multiplicadores),
 		.result(resultado_producto_suma_7)
 	);
 	
@@ -454,7 +530,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_22),
 		.datab_1(mask_value_23),
 		.datab_2(mask_value_24),
-		.ena0(),
+		.ena0(habilitar_multiplicadores),
 		.result(resultado_producto_suma_8)
 	);
 	
@@ -469,18 +545,91 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_25),
 		.datab_1(),
 		.datab_2(),
-		.ena0(),
+		.ena0(habilitar_multiplicadores),
 		.result(resultado_producto_suma_9)
 	);
 		
 
 
 
+//=========================================================================
+
+
+	sumador_3_lanes sumador1(
+			.dataa(resultado_producto_suma_1),
+			.datab(resultado_producto_suma_2),
+			.result(resultado_suma_1)
+		);
+
+//=========================================================================
+
+
+	sumador_3_lanes sumador2(
+			.dataa(resultado_producto_suma_4),
+			.datab(resultado_producto_suma_5),
+			.result(resultado_suma_2)
+		);
+
+
+//=========================================================================
+
+
+	sumador_3_lanes sumador3(
+			.dataa(resultado_producto_suma_7),
+			.datab(resultado_producto_suma_8),
+			.result(resultado_suma_3)
+		);
 
 
 
+//=========================================================================
 
 
+	sumador_3_lanes sumador4(
+			.dataa(resultado_suma_1),
+			.datab(resultado_producto_suma_3),
+			.result(resultado_suma_4)
+		);
+
+
+//=========================================================================
+
+
+	sumador_3_lanes sumador5(
+			.dataa(resultado_suma_2),
+			.datab(resultado_producto_suma_6),
+			.result(resultado_suma_5)
+		);
+
+
+//=========================================================================
+
+
+	sumador_3_lanes sumador6(
+			.dataa(resultado_suma_3),
+			.datab(resultado_producto_suma_9),
+			.result(resultado_suma_6)
+		);
+
+
+//=========================================================================
+
+
+	sumador_3_lanes sumador7(
+			.dataa(resultado_suma_4),
+			.datab(resultado_suma_5),
+			.result(resultado_suma_7)
+		);
+
+
+//=========================================================================
+
+
+	sumador_3_lanes sumador8(
+			.dataa(resultado_suma_6),
+			.datab(resultado_suma_7),
+			.result(resultado_suma_8)
+		);
 
 
 
