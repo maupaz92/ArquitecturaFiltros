@@ -6,16 +6,27 @@
 module ventana_pixeles #(
 	parameter BITS_PIXEL = 8,
 	// cantidad de bits para definir los buffers a utilizar
-	parameter BITS_BUFFERS = 3;
+	parameter BITS_BUFFERS = 3,
+	// cantdad de bits para guardar el tamano posible de la mascara
+	// 3 o 5.
+	parameter BITS_MASCARA = 3
 	
 )
 (
 	input clk,
 	input reset,
+	// la cantidad de buffers define el ancho de la imagen que
+	// se esta procesando. 2=512, 4=1024
 	input [BITS_BUFFERS-1:0] cantidad_buffers_internos,
+	input [BITS_MASCARA-1:0] tamano_mascara,
 	input data_available,
 	input iniciar,
+	input [BITS_PIXEL-1:0] pixel_entrada,
+	input siguiente_ventana,
 	// 
+	
+	output read_pixel,
+	
 	output [BITS_PIXEL-1:0] pixel_1,
 	output [BITS_PIXEL-1:0] pixel_2,
 	output [BITS_PIXEL-1:0] pixel_3,
@@ -54,7 +65,8 @@ module ventana_pixeles #(
 	
 	wire [BITS_PIXEL-1:0] data_to_buff_1;
 	wire [BITS_PIXEL-1:0] data_to_buff_2;
-	wire [BITS_PIXEL-1:0] data_to_buff_3;
+	wire [BITS_PIXEL-1:0] data_to_buff_3;	
+	wire [BITS_PIXEL-1:0] data_to_buff_4;
 	
 	wire buffer_1_full;
 	wire buffer_2_full;
@@ -62,6 +74,19 @@ module ventana_pixeles #(
 	wire buffer_4_full;
 	
 
+	
+	
+	
+//=========================================================================	
+	mux_2_1 mux_4
+	(
+		.entrada_1() ,
+		.entrada_2(pixel_entrada) ,
+		.seleccion() ,
+		.salida(data_to_buff_4) 	
+	);	
+	
+	
 
 //=========================================================================
 	buffer_fifo_configurable buffer_4
@@ -71,8 +96,9 @@ module ventana_pixeles #(
 		.reset_config(),
 		.push(),
 		.pop(),
-		.data_in(),
-		.configuration(),
+		.data_in(data_to_buff_4),
+		.configuration(cantidad_buffers_internos),
+		.save_config(),
 		//
 		.data_out(data_buff_4),
 		.buffer_full(buffer_4_full),
@@ -84,7 +110,7 @@ module ventana_pixeles #(
 	mux_2_1 mux_3
 	(
 		.entrada_1(data_buff_4) ,
-		.entrada_2() ,
+		.entrada_2(pixel_entrada) ,
 		.seleccion() ,
 		.salida(data_to_buff_3) 	
 	);
@@ -99,7 +125,8 @@ module ventana_pixeles #(
 		.push(),
 		.pop(),
 		.data_in(data_to_buff_3),
-		.configuration(),
+		.configuration(cantidad_buffers_internos),
+		.save_config(),
 		//
 		.data_out(data_buff_3),
 		.buffer_full(buffer_3_full),
@@ -112,7 +139,7 @@ module ventana_pixeles #(
 	mux_2_1 mux_2
 	(
 		.entrada_1(data_buff_3) ,
-		.entrada_2() ,
+		.entrada_2(pixel_entrada) ,
 		.seleccion() ,
 		.salida(data_to_buff_2) 	
 	);
@@ -128,7 +155,8 @@ module ventana_pixeles #(
 		.push(),
 		.pop(),
 		.data_in(data_to_buff_2),
-		.configuration(),
+		.configuration(cantidad_buffers_internos),
+		.save_config(),
 		//
 		.data_out(data_buff_2),
 		.buffer_full(buffer_2_full),
@@ -140,7 +168,7 @@ module ventana_pixeles #(
 	mux_2_1 mux_1
 	(
 		.entrada_1(data_buff_2) ,
-		.entrada_2() ,
+		.entrada_2(pixel_entrada) ,
 		.seleccion() ,
 		.salida(data_to_buff_1) 	
 	);
@@ -156,7 +184,8 @@ module ventana_pixeles #(
 		.push(),
 		.pop(),
 		.data_in(data_to_buff_1),
-		.configuration(),
+		.configuration(cantidad_buffers_internos),
+		.save_config(),
 		//
 		.data_out(data_buff_1),
 		.buffer_full(buffer_1_full),

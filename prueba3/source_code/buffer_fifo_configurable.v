@@ -26,6 +26,7 @@ module buffer_fifo_configurable
 	input push,
 	input pop,
 	input [DATA_WIDTH-1:0] data_in,
+	input save_config,
 	input [2:0] configuration,
 	
 	
@@ -95,15 +96,17 @@ module buffer_fifo_configurable
 		e_siguiente = e_actual;
 		subbuffer_activation = 4'bz;
 		case(e_actual)			
+			
 			E_ESPERA_CONFIG: begin
-				case(configuration)
-					1: e_siguiente = E_UN_FIFO;
-					2: e_siguiente = E_DOS_FIFO;
-					3: e_siguiente = E_TRES_FIFO;
-					4: e_siguiente = E_CUATRO_FIFO;
+				case({save_config, configuration})
+					9: e_siguiente = E_UN_FIFO;
+					10: e_siguiente = E_DOS_FIFO;
+					11: e_siguiente = E_TRES_FIFO;
+					12: e_siguiente = E_CUATRO_FIFO;
 					default: e_siguiente = e_actual;
 				endcase
 			end
+			
 			E_UN_FIFO: begin
 				//e_siguiente = ;
 				subbuffer_activation = 4'b0001;

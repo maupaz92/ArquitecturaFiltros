@@ -27,6 +27,7 @@ module control_mascara
 	input habilitacion_registros,
 	//
 	output [BITS_DIRECCION_MEM-1:0] direccion_mem_inicio_mascara,
+	// posibles valores 3|5
 	output [BITS_MASCARA-1:0] tamano_mascara 
 );
 
