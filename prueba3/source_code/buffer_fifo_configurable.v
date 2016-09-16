@@ -98,13 +98,15 @@ module buffer_fifo_configurable
 		case(e_actual)			
 			
 			E_ESPERA_CONFIG: begin
-				case({save_config, configuration})
-					9: e_siguiente = E_UN_FIFO;
-					10: e_siguiente = E_DOS_FIFO;
-					11: e_siguiente = E_TRES_FIFO;
-					12: e_siguiente = E_CUATRO_FIFO;
-					default: e_siguiente = e_actual;
-				endcase
+				if(save_config) begin
+					case(configuration)
+						1: e_siguiente = E_UN_FIFO;
+						2: e_siguiente = E_DOS_FIFO;
+						3: e_siguiente = E_TRES_FIFO;
+						4: e_siguiente = E_CUATRO_FIFO;
+						default: e_siguiente = e_actual;
+					endcase
+				end
 			end
 			
 			E_UN_FIFO: begin

@@ -54,7 +54,7 @@ module control_lecturas_mem_externa_TEST;
 		iniciar = 0;
 		buf_space_available = 1;
 		direccion_mem_inicio_img  = 1;
-		lecturas_totales_mem = 2;
+		lecturas_totales_mem = 3;
 		lectura_mem_completada = 0;
 		
 		repeat(2) @(posedge clk);
@@ -78,17 +78,16 @@ module control_lecturas_mem_externa_TEST;
 		lectura_mem_completada = 1;
 		@(posedge clk);
 		lectura_mem_completada = 0;
-		//
-		repeat(2) @(posedge clk);
-		
+		buf_space_available = 0;
+		repeat(4) @(posedge clk);
+		buf_space_available = 1;
 		@(posedge clk);
 		
-		
 		//
-		repeat(2) @(posedge clk);
-		
+		repeat(4) @(posedge clk);
+		lectura_mem_completada = 1;
 		@(posedge clk);
-		
+		lectura_mem_completada = 0;
 		//
 		repeat(2) @(posedge clk);
 		

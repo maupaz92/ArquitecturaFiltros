@@ -107,7 +107,7 @@ module mascara_filtro_TEST;
 	
 		reset = 0;
 		iniciar_lectura_mascara = 0;
-		tamano_mascara = 5;
+		tamano_mascara = 3;
 		direccion_inicio_mascara = 2;
 		datos_memoria = 32'hffff_ffff;
 		lectura_completada = 0;
@@ -143,120 +143,8 @@ module mascara_filtro_TEST;
 		@(posedge clk);
 		lectura_completada = 0;
 		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
-		
-		repeat(5) @(posedge clk);
-		lectura_completada = 1;
-		@(posedge clk);
-		lectura_completada = 0;
+//==========================================================================		
+
 		
 		
 	

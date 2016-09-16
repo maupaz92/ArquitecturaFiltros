@@ -6,11 +6,16 @@
 module convolucion_mascara_ventana #(
 	parameter BITS_ELEMENTO_MASCARA = 10,
 	parameter BITS_PIXEL = 8,
-	parameter BITS_PRODUCTO_SUMA = 11
+	parameter BITS_PRODUCTO_SUMA = 11,
+	parameter BITS_MASCARA = 3
 )
 (
+	input clk,
+	input reset,
 	input ventana_pixeles_lista,
 	input [BITS_ELEMENTO_MASCARA-1:0] denominador,
+	// valor que puede ser 3|5
+	input [BITS_MASCARA-1:0] tamano_mascara,
 	
 	input signed [BITS_ELEMENTO_MASCARA-1:0] mask_value_1,
 	input signed [BITS_ELEMENTO_MASCARA-1:0] mask_value_2,
@@ -75,6 +80,8 @@ module convolucion_mascara_ventana #(
 
 
 	wire habilitar_multiplicadores;
+	wire habilitar_multiplicadores_mask_3;
+	wire habilitar_multiplicadores_mask_5;
 
 
 	wire [BITS_PIXEL-1:0] cociente_1;
@@ -174,7 +181,12 @@ module convolucion_mascara_ventana #(
 	assign habilitar_multiplicadores = (e_actual == E_ACTIVAR_MULT);
 	assign pixel_calculado = (e_actual == E_PIXEL_LISTO);
 
-	assign pixel_resultado = resultado_suma_8[BITS_PIXEL-1:0];
+	assign pixel_resultado = habilitar_multiplicadores_mask_3 ? 
+		resultado_suma_4[BITS_PIXEL-1:0] :
+		resultado_suma_8[BITS_PIXEL-1:0];
+	
+	assign habilitar_multiplicadores_mask_3 = tamano_mascara == 3;
+	assign habilitar_multiplicadores_mask_5 = tamano_mascara == 5;
 	
 //*********************************************************************************
 //*********************************************************************************
@@ -422,7 +434,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_1),
 		.datab_1(mask_value_2),
 		.datab_2(mask_value_3),
-		.ena0(habilitar_multiplicadores),
+		.ena0(habilitar_multiplicadores & habilitar_multiplicadores_mask_3),
 		.result(resultado_producto_suma_1)
 	);
 
@@ -437,7 +449,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_4),
 		.datab_1(mask_value_5),
 		.datab_2(mask_value_6),
-		.ena0(habilitar_multiplicadores),
+		.ena0(habilitar_multiplicadores & habilitar_multiplicadores_mask_3),
 		.result(resultado_producto_suma_2)
 	);
 	
@@ -452,7 +464,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_7),
 		.datab_1(mask_value_8),
 		.datab_2(mask_value_9),
-		.ena0(habilitar_multiplicadores),
+		.ena0(habilitar_multiplicadores & habilitar_multiplicadores_mask_3),
 		.result(resultado_producto_suma_3)
 	);
 	
@@ -468,7 +480,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_10),
 		.datab_1(mask_value_11),
 		.datab_2(mask_value_12),
-		.ena0(habilitar_multiplicadores),
+		.ena0(habilitar_multiplicadores & habilitar_multiplicadores_mask_5),
 		.result(resultado_producto_suma_4)
 	);
 	
@@ -483,7 +495,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_13),
 		.datab_1(mask_value_14),
 		.datab_2(mask_value_15),
-		.ena0(habilitar_multiplicadores),
+		.ena0(habilitar_multiplicadores & habilitar_multiplicadores_mask_5),
 		.result(resultado_producto_suma_5)
 	);
 	
@@ -499,7 +511,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_16),
 		.datab_1(mask_value_17),
 		.datab_2(mask_value_18),
-		.ena0(habilitar_multiplicadores),
+		.ena0(habilitar_multiplicadores & habilitar_multiplicadores_mask_5),
 		.result(resultado_producto_suma_6)
 	);
 	
@@ -515,7 +527,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_19),
 		.datab_1(mask_value_20),
 		.datab_2(mask_value_21),
-		.ena0(habilitar_multiplicadores),
+		.ena0(habilitar_multiplicadores & habilitar_multiplicadores_mask_5),
 		.result(resultado_producto_suma_7)
 	);
 	
@@ -530,7 +542,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_22),
 		.datab_1(mask_value_23),
 		.datab_2(mask_value_24),
-		.ena0(habilitar_multiplicadores),
+		.ena0(habilitar_multiplicadores & habilitar_multiplicadores_mask_5),
 		.result(resultado_producto_suma_8)
 	);
 	
@@ -545,7 +557,7 @@ module convolucion_mascara_ventana #(
 		.datab_0(mask_value_25),
 		.datab_1(),
 		.datab_2(),
-		.ena0(habilitar_multiplicadores),
+		.ena0(habilitar_multiplicadores & habilitar_multiplicadores_mask_5),
 		.result(resultado_producto_suma_9)
 	);
 		

@@ -114,8 +114,10 @@ set_global_assignment -name QIP_FILE IP_cores/altgxb_reconfig.qip
 set_global_assignment -name QIP_FILE qsys/synthesis/qsys.qip
 set_global_assignment -name QIP_FILE IP_cores/divisor.qip
 set_global_assignment -name QIP_FILE IP_cores/multiplicador_sumador_3_lanes.qip
+set_global_assignment -name QIP_FILE IP_cores/sumador_3_lanes.qip
 set_global_assignment -name HEX_FILE memoria_interna.hex
 set_global_assignment -name VERILOG_FILE source_code/buffer_fifo_configurable.v
+set_global_assignment -name VERILOG_FILE source_code/buffer_fifo_configurable_TEST.v
 set_global_assignment -name VERILOG_FILE source_code/buffer_pixeles_mem.v
 set_global_assignment -name VERILOG_FILE source_code/buffer_pixeles_mem_TEST.v
 set_global_assignment -name VERILOG_FILE source_code/buffer_unidad.v
@@ -125,6 +127,7 @@ set_global_assignment -name VERILOG_FILE source_code/control_mascara.v
 set_global_assignment -name VERILOG_FILE source_code/control_mascara_TEST.v
 set_global_assignment -name VERILOG_FILE source_code/control_ventana.v
 set_global_assignment -name VERILOG_FILE source_code/convolucion_mascara_ventana.v
+set_global_assignment -name VERILOG_FILE source_code/convolucion_mascara_ventana_TEST.v
 set_global_assignment -name VERILOG_FILE source_code/FlipFlopD_Habilitado.v
 set_global_assignment -name VERILOG_FILE source_code/mascara_filtro.v
 set_global_assignment -name VERILOG_FILE source_code/mascara_filtro_TEST.v
@@ -133,7 +136,6 @@ set_global_assignment -name VERILOG_FILE source_code/mux_2_1.v
 set_global_assignment -name VERILOG_FILE prueba_3.v
 set_global_assignment -name VERILOG_FILE source_code/registro_sumador.v
 set_global_assignment -name VERILOG_FILE source_code/registro_sumador_dinamico.v
-set_global_assignment -name VERILOG_FILE source_code/ventana_pixeles.v
-set_global_assignment -name QIP_FILE IP_cores/sumador_3_lanes.qip
 set_global_assignment -name VERILOG_FILE source_code/sumador_3_lanes_TEST.v
+set_global_assignment -name VERILOG_FILE source_code/ventana_pixeles.v
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

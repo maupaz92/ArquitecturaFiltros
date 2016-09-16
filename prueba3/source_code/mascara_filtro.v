@@ -292,7 +292,7 @@ module mascara_filtro
 	FlipFlopD_Habilitado ff_1_grupo_1(
 		 .clk(clk),
 		 .reset(reset),
-		 .habilitador(	[0] && hablitacion_escritura_grupos),
+		 .habilitador(	habilitacion_registros[0] && hablitacion_escritura_grupos),
 		 .datos_entrada(datos_memoria[29:20]),
 		 .datos_salida(valor_mascara_1)
 		 );	

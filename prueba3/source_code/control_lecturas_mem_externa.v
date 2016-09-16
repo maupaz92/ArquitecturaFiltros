@@ -1,5 +1,13 @@
 /*
 
+modulo que se encarga de mantener al modulo 'buffer_pixeles_mem' en control, es 
+decir leer sus salidas y verificar si tiene espacio para mas datos a guardar.
+Si el buffer no tiene espacio, se espera hasta que lo haya. 
+
+Se encarga ademas de hacer los request a la memoria externa, maneja la direccion
+de lectura de dicha memoria y los datos que vienen de memoria son recibidos
+por el modulo buffer, el cual guarda los datos hasta que sean leidos por 
+el modulo de ventana.
 
 */
 
