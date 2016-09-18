@@ -101,10 +101,14 @@ module ventana_pixeles #(
 	// configuracion de los buffers 
 	wire guardar_configuracion_buffers;
 	
-	wire buffer_short_tres_empty;
-	wire buffer_short_cinco_empty;
-	
-	
+	// senal donde cada bit sirve para seleccionar cual entrada es la que
+	// se despliega en la salida de los muxes
+	wire [3:0] habilitacion_muxes_actual;
+	// senal que guarda la proxima seleccion de datos
+	wire [3:0] habilitacion_muxes_siguiente;
+	// senal que indica que se debe de actualizar la seleccion de los muxes
+	// esto una vez que se han llenado los buffers segun la configuracion
+	wire actualizar_habilitacion_muxes;
 	
 	// senal que tiene el valor de si el buffer actual esta lleno o no
 	reg buffer_fullness_actual;
@@ -194,6 +198,11 @@ el procesamiento por la unidad funcional.
 					e_siguiente = E_ESPERA_DATOS;
 			end
 			E_LLENADO_COMPLETO: begin
+				e_siguiente = E_ESPERA_DATOS_2;
+			end
+			E_ESPERA_DATOS_2: begin
+				if(data_available)
+					e_siguiente = E_GUARDAR;
 			end
 			default:
 				e_siguiente = E_INICIO;
@@ -204,19 +213,25 @@ el procesamiento por la unidad funcional.
 
 //=========================================================================
  		
-		assign pixel_leido = (e_actual == E_GUARDAR);
+		assign guardar_configuracion_buffers = (e_actual == E_GUARDAR_CONFIG);
 		
 		assign guardar_pixel = (e_siguiente == E_GUARDAR);
 		
+		assign pixel_leido = (e_actual == E_GUARDAR);
+		
 		assign habilitar_siguiente_buffer = (e_actual == E_REVISION);
 		
-		assign guardar_configuracion_buffers = (e_actual == E_GUARDAR_CONFIG);
+		assign actualizar_habilitacion_muxes = (e_actual == E_LLENADO_COMPLETO);
 
 		assign ventana_grande = (tamano_mascara == 5);
 		
 		assign llenado_buffers_completo = buffer_full_5 || (buffer_full_3_short & ~ventana_grande);
 		
 		assign read_pixel = pixel_leido;
+		
+		assign habilitacion_muxes_siguiente = ventana_grande ? 0 : 4;
+		
+		
 		
 /*
  *
@@ -255,6 +270,18 @@ sucesivamente hasta llenar los buffers que se configuraron
 		.resultado(habilitador_buffer_llenado)
 	);	
 
+	
+
+	FlipFlopD_Habilitado reg_habilitacion_muxes (
+	 .clk(clk), 
+	 .reset(reset), 
+	 .habilitador(actualizar_habilitacion_muxes), 
+	 .datos_entrada(habilitacion_muxes_siguiente),
+	 .datos_salida(habilitacion_muxes_actual)
+	);
+		
+	defparam reg_habilitacion_muxes.BITS_EN_REGISTRO = 4;
+	defparam reg_habilitacion_muxes.VALOR_EN_RESET = 15;
 
 
 	
@@ -275,7 +302,7 @@ sucesivamente hasta llenar los buffers que se configuraron
 		.sclr(reset),
 		.wrreq(guardar_pixel & habilitador_buffer_llenado[4]), //push
 		//
-		.empty(buffer_short_cinco_empty),
+		.empty(),
 		.full(buffer_full_5),
 		.q(data_buff_5),
 		.usedw()
@@ -287,7 +314,7 @@ sucesivamente hasta llenar los buffers que se configuraron
 	(
 		.entrada_1(data_buff_5) ,
 		.entrada_2(pixel_entrada) ,
-		.seleccion(1'b1) ,
+		.seleccion(habilitacion_muxes_actual[3]) ,
 		.salida(data_to_buff_4) 	
 	);		
 	
@@ -314,7 +341,7 @@ sucesivamente hasta llenar los buffers que se configuraron
 	(
 		.entrada_1(data_buff_4) ,
 		.entrada_2(pixel_entrada) ,
-		.seleccion(1'b1) ,
+		.seleccion(habilitacion_muxes_actual[2]) ,
 		.salida(data_to_buff_3) 	
 	);
 
@@ -343,7 +370,7 @@ sucesivamente hasta llenar los buffers que se configuraron
 		.sclr(reset),
 		.wrreq(guardar_pixel & habilitador_buffer_llenado[2] & ~ventana_grande), //push
 		//
-		.empty(buffer_short_tres_empty),
+		.empty(),
 		.full(buffer_full_3_short),
 		.q(data_to_buff_3_intern_short),
 		.usedw()
@@ -376,7 +403,7 @@ sucesivamente hasta llenar los buffers que se configuraron
 	(
 		.entrada_1(data_buff_3) ,
 		.entrada_2(pixel_entrada) ,
-		.seleccion(1'b1),
+		.seleccion(habilitacion_muxes_actual[1]),
 		.salida(data_to_buff_2)
 	);
 
@@ -404,7 +431,7 @@ sucesivamente hasta llenar los buffers que se configuraron
 	(
 		.entrada_1(data_buff_2) ,
 		.entrada_2(pixel_entrada) ,
-		.seleccion(1'b1) ,
+		.seleccion(habilitacion_muxes_actual[0]) ,
 		.salida(data_to_buff_1) 	
 	);
 
