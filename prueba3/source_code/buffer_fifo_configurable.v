@@ -21,8 +21,7 @@ module buffer_fifo_configurable
 )
 (
 	input clk,
-	input reset_data,
-	input reset_config,
+	input reset,
 	input push,
 	input pop,
 	input [DATA_WIDTH-1:0] data_in,
@@ -81,7 +80,7 @@ module buffer_fifo_configurable
 //==========================================================================	
 // estado del registro
 	always @(posedge clk) begin
-		if(reset_config) begin
+		if(reset) begin
 			e_actual <= E_ESPERA_CONFIG;
 			e_actual_minor1 <= E_INGRESO_DATOS;
 		end else begin
@@ -194,7 +193,7 @@ CONTEXTO:
 	buffer_unidad buffer_4
 	(
 		.clk(clk) ,
-		.reset(reset_data) ,
+		.reset(reset) ,
 		.data_in(data_in) ,
 		.read_req(pop) ,
 		.write_req(push || push_intern) ,
@@ -237,7 +236,7 @@ CONTEXTO:
 	buffer_unidad buffer_3
 	(
 		.clk(clk) ,
-		.reset(reset_data) ,
+		.reset(reset) ,
 		.data_in(data_mux3_out) ,
 		.read_req(pop) ,
 		.write_req(push || (push_intern && buffer4_data_change) ) ,
@@ -278,7 +277,7 @@ CONTEXTO:
 	buffer_unidad buffer_2
 	(
 		.clk(clk) ,
-		.reset(reset_data) ,
+		.reset(reset) ,
 		.data_in(data_mux2_out) ,
 		.read_req(pop) ,
 		.write_req(push || (push_intern && buffer3_data_change)) ,
@@ -333,7 +332,7 @@ el buffer anterior, y asi sucesivamente para los demas.
 	buffer_unidad buffer_1
 	(
 		.clk(clk) ,
-		.reset(reset_data) ,
+		.reset(reset) ,
 		.data_in(data_mux1_out) ,
 		.read_req(pop) ,
 		.write_req(push || (push_intern && buffer2_data_change)) ,

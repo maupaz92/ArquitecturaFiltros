@@ -6,8 +6,7 @@ module buffer_fifo_configurable_TEST;
 
 	// Inputs
 	reg clk;
-	reg reset_config;
-	reg reset_data;
+	reg reset;
 	reg push;
 	reg pop;
 	reg [7:0] data_in;
@@ -24,8 +23,7 @@ module buffer_fifo_configurable_TEST;
 	buffer_fifo_configurable buffer_fifo_configurable_inst
 	(
 		.clk(clk),
-		.reset_data(reset_data),
-		.reset_config(reset_config),
+		.reset(reset),
 		.push(push),
 		.pop(pop),
 		.data_in(data_in),
@@ -49,14 +47,18 @@ module buffer_fifo_configurable_TEST;
 
 	initial begin
 	
-		reset_data = 0;
-		reset_config = 0;
+		reset = 0;
 		push = 0;
 		pop = 0;
 		data_in = 1;
 		configuration = 0;
 		save_config = 0;
 		conteo = 0;
+		
+		repeat(2) @(posedge clk);
+		reset = 1;
+		@(posedge clk);
+		reset = 0;
 		
 		repeat(2) @(posedge clk);
 		save_config = 1;
@@ -67,11 +69,11 @@ module buffer_fifo_configurable_TEST;
 		repeat(2) @(posedge clk);
 		
 		for (conteo = 0; conteo < 260; conteo = conteo + 1) begin		
-			repeat(2) @(posedge clk);
+			repeat(1) @(posedge clk);
 			push = 1;
 			@(posedge clk);
 			push = 0;
-			data_in = conteo[7:0];
+			//data_in = conteo[7:0];
 		end
 		
 //		repeat(2) @(posedge clk);

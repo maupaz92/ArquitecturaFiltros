@@ -18,6 +18,7 @@ cambiar la instancia, y modificar los parametros del modulo.
 module buffer_unidad
 #(
 	parameter DATA_WIDTH = 8,
+	// caben 256 elementos en el buffer
 	parameter BITS_FOR_DATA = 8
 )
 (

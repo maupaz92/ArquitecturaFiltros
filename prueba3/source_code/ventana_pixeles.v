@@ -22,7 +22,7 @@ module ventana_pixeles #(
 	input data_available,
 	input iniciar,
 	input [BITS_PIXEL-1:0] pixel_entrada,
-	input siguiente_ventana,
+	//input siguiente_ventana,
 	// 
 	
 	output read_pixel,
@@ -56,8 +56,10 @@ module ventana_pixeles #(
 
 //=========================================================================
 
+	// pulso que en alto indica que el tamano de la ventana es 5 diagonal, 3 en caso contrario
+	wire ventana_grande;
 
-
+	wire [BITS_PIXEL-1:0] data_buff_5;
 	wire [BITS_PIXEL-1:0] data_buff_4;
 	wire [BITS_PIXEL-1:0] data_buff_3;
 	wire [BITS_PIXEL-1:0] data_buff_2;
@@ -67,41 +69,242 @@ module ventana_pixeles #(
 	wire [BITS_PIXEL-1:0] data_to_buff_2;
 	wire [BITS_PIXEL-1:0] data_to_buff_3;	
 	wire [BITS_PIXEL-1:0] data_to_buff_4;
+	wire [BITS_PIXEL-1:0] data_to_buff_3_intern_short;
+	wire [BITS_PIXEL-1:0] data_to_buff_3_intern_large;
 	
-	wire buffer_1_full;
-	wire buffer_2_full;
-	wire buffer_3_full;
-	wire buffer_4_full;
+	wire buffer_full_1;
+	wire buffer_full_2;
+	wire buffer_full_3_large;
+	wire buffer_full_3_short;
+	wire buffer_full_3;
+	wire buffer_full_4;
+	wire buffer_full_5;
+	
+	// senal que se activa una vez que se lea un pixel del buffer de pixeles
+	wire pixel_leido;
+	
+	// senal que indica que se debe de guardar la entrada pixel en el buffer actual habilitado
+	wire guardar_pixel;
+	
+	// senal que tiene el indice para indicar sobre cual buffer se esta llenando
+	wire [2:0] indice_buffer_actual;
+	// senal que habilita el buffer actual que se este llenando
+	wire [4:0] habilitador_buffer_llenado;
+	
+	// senal que indica que se debe llenar el siguiente buffer
+	wire habilitar_siguiente_buffer;
+
+	// senal que indica que se han llenado los buffers segun la configuracion dada
+	wire llenado_buffers_completo;
+	
+	// senal que antes de comenzar el llenado de los buffers se activa para capurar
+	// configuracion de los buffers 
+	wire guardar_configuracion_buffers;
+	
+	wire buffer_short_tres_empty;
+	wire buffer_short_cinco_empty;
+	
+	
+	
+	// senal que tiene el valor de si el buffer actual esta lleno o no
+	reg buffer_fullness_actual;
+
+/*
+ *
+==========================================================================
+CONTEXTO: ssegun el indice que mantenga el registro, se intercambia entre
+las diferentes senales 'full' de los buffers, de esta forma es posible
+saber que el buffer actual ha sido lleno, y pasar al siguiente, donde
+se va a repetir el mismo proceso
+*
+*/
+	always@(*) begin
+		case(indice_buffer_actual)
+			0:
+				buffer_fullness_actual = buffer_full_1;
+			1:
+				buffer_fullness_actual = buffer_full_2;
+			2:
+				buffer_fullness_actual = buffer_full_3;
+			3:
+				buffer_fullness_actual = buffer_full_4;
+			4:
+				buffer_fullness_actual = buffer_full_5;
+			default:
+				buffer_fullness_actual = buffer_full_1;
+		endcase
+	end
+
+
+//=========================================================================
+	 reg [2:0] e_actual, e_siguiente;
+	 
+	 localparam 
+		E_INICIO					= 0,
+		E_GUARDAR_CONFIG		= 1,
+		E_ESPERA_DATOS			= 2,
+		E_GUARDAR				= 3,
+		E_REVISION				= 4,
+		E_LLENADO_COMPLETO	= 5;
+		
+//==========================================================================	
+// estado del registro
+	always @(posedge clk) begin
+		if(reset)
+			e_actual <= E_INICIO;
+		else
+			e_actual <= e_siguiente;
+	end
+
+/*
+ *
+==========================================================================
+CONTEXTO: el proceso de llenado empieza a meter pixeles al primer buffer,
+hasta que el mismo este lleno, una vez que este lleno se actualiza al sig
+buffer y asi sucesivamente hasta que se alcance la senal 'llenado_buffers_completo', 
+la cual indica que ya los buffers estan llenos y se puede continuar con el movimiento
+de los pixeles a traves de los registros de la ventana para asi poder efectuar
+el procesamiento por la unidad funcional.
+*
+*/
+	always@(*) begin		
+		e_siguiente = e_actual;
+		case(e_actual)			
+			E_INICIO: begin
+				if(iniciar)
+					e_siguiente = E_GUARDAR_CONFIG;
+			end
+			E_GUARDAR_CONFIG: begin
+				e_siguiente = E_ESPERA_DATOS;
+			end
+			E_ESPERA_DATOS: begin
+				if(data_available)
+					e_siguiente = E_GUARDAR;
+			end
+			E_GUARDAR: begin
+				if(buffer_fullness_actual)
+					e_siguiente = E_REVISION;
+				else
+					e_siguiente = E_ESPERA_DATOS;
+			end
+			E_REVISION: begin
+				if(llenado_buffers_completo)
+					e_siguiente = E_LLENADO_COMPLETO;
+				else 
+					e_siguiente = E_ESPERA_DATOS;
+			end
+			E_LLENADO_COMPLETO: begin
+			end
+			default:
+				e_siguiente = E_INICIO;
+		endcase
+	end		
+	
 	
 
+//=========================================================================
+ 		
+		assign pixel_leido = (e_actual == E_GUARDAR);
+		
+		assign guardar_pixel = (e_siguiente == E_GUARDAR);
+		
+		assign habilitar_siguiente_buffer = (e_actual == E_REVISION);
+		
+		assign guardar_configuracion_buffers = (e_actual == E_GUARDAR_CONFIG);
+
+		assign ventana_grande = (tamano_mascara == 5);
+		
+		assign llenado_buffers_completo = buffer_full_5 || (buffer_full_3_short & ~ventana_grande);
+		
+		assign read_pixel = pixel_leido;
+		
+/*
+ *
+==========================================================================
+CONTEXTO:  
+Mediante el indice actual se lee el estado 'full' del buffer. De esta forma es posible
+saber si el buffer actual esta lleno, y cambiar al siguiente 
+*
+*/
+	registro_sumador indice_buffers (
+	 .clk(clk), 
+	 .reset(reset),	 
+	 .sumar(habilitar_siguiente_buffer),
+	 .resultado(indice_buffer_actual)
+	);
 	
+	defparam indice_buffers.CANTIDAD_SUMA = 1;
+	// son 5 posibles buffers
+	defparam indice_buffers.BITS_DATOS = 3;
+
 	
+/*
+ *
+==========================================================================
+CONTEXTO: una vez que se llena el buffer actual, se hace un corrimiento
+hacia la ixquiera para habilitar el proximo buffer en la escritura y 
+deshabilitar los anteriores. Se inicia en 00001, luego a 00010 y asi
+sucesivamente hasta llenar los buffers que se configuraron
+*
+*/
+	registro_desplazador_izq registro_desplazador_izq_inst
+	(
+		.clk(clk),
+		.reset(reset),
+		.desplazar(habilitar_siguiente_buffer),
+		.resultado(habilitador_buffer_llenado)
+	);	
+
+
+
+	
+//					Inicio de los buffers para guardar los pixeles en la ventana
+//*********************************************************************************
+//*********************************************************************************
+//*********************************************************************************
+//*********************************************************************************	
+
+
+
+
+//=========================================================================	
+	fifo_8w_8b	buffer_5 (
+		.clock(clk),
+		.data(pixel_entrada),
+		.rdreq(1'b0), //pop
+		.sclr(reset),
+		.wrreq(guardar_pixel & habilitador_buffer_llenado[4]), //push
+		//
+		.empty(buffer_short_cinco_empty),
+		.full(buffer_full_5),
+		.q(data_buff_5),
+		.usedw()
+	);
+
 	
 //=========================================================================	
 	mux_2_1 mux_4
 	(
-		.entrada_1() ,
+		.entrada_1(data_buff_5) ,
 		.entrada_2(pixel_entrada) ,
-		.seleccion() ,
+		.seleccion(1'b1) ,
 		.salida(data_to_buff_4) 	
-	);	
-	
+	);		
 	
 
 //=========================================================================
 	buffer_fifo_configurable buffer_4
 	(
 		.clk(clk),
-		.reset_data(),
-		.reset_config(),
-		.push(),
-		.pop(),
+		.reset(reset),
+		.push(guardar_pixel & habilitador_buffer_llenado[3]),
+		.pop(1'b0),
 		.data_in(data_to_buff_4),
 		.configuration(cantidad_buffers_internos),
-		.save_config(),
+		.save_config(guardar_configuracion_buffers),
 		//
 		.data_out(data_buff_4),
-		.buffer_full(buffer_4_full),
+		.buffer_full(buffer_full_4),
 		.no_config()
 	);
 
@@ -111,37 +314,70 @@ module ventana_pixeles #(
 	(
 		.entrada_1(data_buff_4) ,
 		.entrada_2(pixel_entrada) ,
-		.seleccion() ,
+		.seleccion(1'b1) ,
 		.salida(data_to_buff_3) 	
 	);
 
 	
 //=========================================================================
-	buffer_fifo_configurable buffer_3
+	buffer_fifo_configurable buffer_3_large
 	(
 		.clk(clk),
-		.reset_data(),
-		.reset_config(),
-		.push(),
-		.pop(),
+		.reset(reset),
+		.push(guardar_pixel & habilitador_buffer_llenado[2] & ventana_grande),
+		.pop(1'b0),
 		.data_in(data_to_buff_3),
 		.configuration(cantidad_buffers_internos),
-		.save_config(),
+		.save_config(guardar_configuracion_buffers),
 		//
-		.data_out(data_buff_3),
-		.buffer_full(buffer_3_full),
+		.data_out(data_to_buff_3_intern_large),
+		.buffer_full(buffer_full_3_large),
 		.no_config()
+	);
+	
+//=========================================================================	
+	fifo_8w_8b	buffer_3_short (
+		.clock(clk),
+		.data(data_to_buff_3),
+		.rdreq(1'b0), //pop
+		.sclr(reset),
+		.wrreq(guardar_pixel & habilitador_buffer_llenado[2] & ~ventana_grande), //push
+		//
+		.empty(buffer_short_tres_empty),
+		.full(buffer_full_3_short),
+		.q(data_to_buff_3_intern_short),
+		.usedw()
 	);
 
 
+//=========================================================================	
+	mux_2_1 mux_buffer_3_fullness
+	(
+		.entrada_1(buffer_full_3_short) ,
+		.entrada_2(buffer_full_3_large) ,
+		.seleccion(ventana_grande) ,
+		.salida(buffer_full_3) 	
+	);		
+	
+	defparam mux_buffer_3_fullness.BITS_DATOS = 1;
+	
+//=========================================================================	
+	mux_2_1 mux_3_interno
+	(
+		.entrada_1(data_to_buff_3_intern_short) ,
+		.entrada_2(data_to_buff_3_intern_large) ,
+		.seleccion(ventana_grande) ,
+		.salida(data_buff_3) 	
+	);	
+	
 	
 //=========================================================================	
 	mux_2_1 mux_2
 	(
 		.entrada_1(data_buff_3) ,
 		.entrada_2(pixel_entrada) ,
-		.seleccion() ,
-		.salida(data_to_buff_2) 	
+		.seleccion(1'b1),
+		.salida(data_to_buff_2)
 	);
 
 
@@ -150,16 +386,15 @@ module ventana_pixeles #(
 	buffer_fifo_configurable buffer_2
 	(
 		.clk(clk),
-		.reset_data(),
-		.reset_config(),
-		.push(),
-		.pop(),
+		.reset(reset),
+		.push(guardar_pixel & habilitador_buffer_llenado[1]),
+		.pop(1'b0),
 		.data_in(data_to_buff_2),
 		.configuration(cantidad_buffers_internos),
-		.save_config(),
+		.save_config(guardar_configuracion_buffers),
 		//
 		.data_out(data_buff_2),
-		.buffer_full(buffer_2_full),
+		.buffer_full(buffer_full_2),
 		.no_config()
 	);
 
@@ -169,7 +404,7 @@ module ventana_pixeles #(
 	(
 		.entrada_1(data_buff_2) ,
 		.entrada_2(pixel_entrada) ,
-		.seleccion() ,
+		.seleccion(1'b1) ,
 		.salida(data_to_buff_1) 	
 	);
 
@@ -179,16 +414,15 @@ module ventana_pixeles #(
 	buffer_fifo_configurable buffer_1
 	(
 		.clk(clk),
-		.reset_data(),
-		.reset_config(),
-		.push(),
-		.pop(),
+		.reset(reset),
+		.push(guardar_pixel & habilitador_buffer_llenado[0]),
+		.pop(1'b0),
 		.data_in(data_to_buff_1),
 		.configuration(cantidad_buffers_internos),
-		.save_config(),
+		.save_config(guardar_configuracion_buffers),
 		//
 		.data_out(data_buff_1),
-		.buffer_full(buffer_1_full),
+		.buffer_full(buffer_full_1),
 		.no_config()
 	);
 
@@ -213,7 +447,7 @@ module ventana_pixeles #(
 		 .clk(clk), 
 		 .reset(reset), 
 		 .habilitador(), 
-		 .datos_entrada(),
+		 .datos_entrada(data_buff_5),
 		 .datos_salida(pixel_25)
 		);
 		
