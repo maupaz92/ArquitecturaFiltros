@@ -15,9 +15,11 @@ module ventana_pixeles_TEST;
 	reg [2:0] tamano_mascara;
 	reg data_available;
 	reg iniciar;
+	reg siguiente_ventana;
 	
 	//outputs
 	wire read_pixel;
+	wire ventana_valida;
 	
 	wire [7:0] pix_1;
 	wire [7:0] pix_2;
@@ -46,7 +48,7 @@ module ventana_pixeles_TEST;
 	wire [7:0] pix_25;
 	
 	
-	integer conteo;
+	//integer conteo;
 
 	ventana_pixeles ventana_pixeles_inst
 	(
@@ -57,8 +59,10 @@ module ventana_pixeles_TEST;
 		.data_available(data_available),
 		.iniciar(iniciar),
 		.pixel_entrada(pixel_entrada),
+		.siguiente_ventana(siguiente_ventana),
 		//
 		.read_pixel(read_pixel),
+		.ventana_valida(ventana_valida),
 		.pixel_1(pix_1),
 		.pixel_2(pix_2),
 		.pixel_3(pix_3),
@@ -105,6 +109,7 @@ module ventana_pixeles_TEST;
 		data_available = 1;
 		iniciar = 0;
 		pixel_entrada = 255;
+		siguiente_ventana = 1;
 		
 		repeat(2) @(posedge clk);
 		reset = 1;

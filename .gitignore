@@ -15,3 +15,5 @@
 
 #no omitir los siguiente archivos
 #!makefile
+
+prueba3/prueba_sdram.qsys

@@ -1,5 +1,15 @@
 
 
+/*
+
+modulo que tiene a disposicion los registros en los cuales se pueden guardar las difentes
+configuraciones con todo lo que tenga que ver al respecto de la ventana de la imagen. Cantidad
+de buffers internos de los buffers, direccion de memoria de inicio de la imagen a procesar, entre
+otros. Este modulo es accedido mediante un mapeo de memoria, ya que tiene asignado virtualmente
+ciertos espacios para que puedan escribirse datos en los registros
+
+*/
+
 
 module control_ventana
 #(

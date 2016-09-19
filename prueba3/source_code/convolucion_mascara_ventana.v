@@ -1,5 +1,20 @@
 /*
 
+modulo que se encarga de aplicar la convolucion de los pixeles en la ventana actual, con los
+datos en la mascara. Se aplica una operacion de suma de productos de todos los pixeles que esten
+activos. El resultado es un pixel que equivale a la operacion aplicada a los pixeles en su vecindad.
+
+el modulo espera a que la senal ventana_pixeles_lista sea alta para aplicar el respectivo proceso.
+Una vez terminado el proceso activa la senal pixel_calculado para indicar que el resultado ya puede
+ser obtenido
+
+debido a que muchas mascaras tienen valores de punto flotante, para agilizar el proceso se trabaja
+con aproximaciones entera, por lo que se utiliza una entrada 'denominador', por el cual los valores
+de la ventana de pixeles seran dividos, luego para ser multiplicados por los elementos de la mascara
+y sumar todo el resultado. por lo que se deben ingresar mascaras con un factor comun, si es que se
+quisiera aplicar un valor de punto flotanto, en caso de solo enteros, mantener el valor de la entrada
+denominador en 1, para que no hayan problemas con la division de los valores, la cual se aplica siempre
+ya que es un proceso combinacional
 
 */
 
