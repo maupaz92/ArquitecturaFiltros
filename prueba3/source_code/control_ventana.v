@@ -36,7 +36,11 @@ module control_ventana
 	output [BITS_BUFFERS-1:0] cantidad_buffers_internos 
 );
 
-	
+
+	// senales que se usan para activar cual de los 
+	// registros recibira los datos de entrada, siempre
+	// y cuando el modulo en gral este hablitado
+	reg [2:0] habilitacion_interna_modulos;	
 
 
 
@@ -44,12 +48,14 @@ module control_ventana
 	
 	always @(*) begin
 		casex({habilitacion_registros, direccion_registros[1:0]})
-			'b1x0:
-				habilitacion_interna_modulos = 2'b01;
-			'b1x1:
-				habilitacion_interna_modulos = 2'b10;
+			'b100:
+				habilitacion_interna_modulos = 3'b001;
+			'b101:
+				habilitacion_interna_modulos = 3'b010;
+			'b110:
+				habilitacion_interna_modulos = 3'b100;
 			default:
-				habilitacion_interna_modulos = 2'b0;
+				habilitacion_interna_modulos = 3'b0;
 		endcase
 	end
 
@@ -75,7 +81,7 @@ module control_ventana
 	FlipFlopD_Habilitado ff_cantidad_lecturas_memoria(
 		 .clk(clk),
 		 .reset(reset),
-		 .habilitador(habilitacion_interna_modulos[0]),
+		 .habilitador(habilitacion_interna_modulos[1]),
 		 .datos_entrada(datos_registros),
 		 .datos_salida(cantidad_lecturas_mem)
 		 );	
@@ -91,7 +97,7 @@ module control_ventana
 	FlipFlopD_Habilitado ff_buffers_internos(
 		 .clk(clk),
 		 .reset(reset),
-		 .habilitador(habilitacion_interna_modulos[0]),
+		 .habilitador(habilitacion_interna_modulos[2]),
 		 .datos_entrada(datos_registros[BITS_BUFFERS-1:0]),
 		 .datos_salida(cantidad_buffers_internos)
 		 );	
