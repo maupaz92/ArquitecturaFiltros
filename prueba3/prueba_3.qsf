@@ -108,7 +108,6 @@ set_location_assignment PIN_AE25 -to botones[1]
 set_location_assignment PIN_AF30 -to botones[2]
 set_instance_assignment -name IO_STANDARD "2.5 V" -to botones[3]
 set_location_assignment PIN_AE26 -to botones[3]
-set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
 set_global_assignment -name QIP_FILE IP_cores/fifo_8w_8b.qip
 set_global_assignment -name QIP_FILE IP_cores/fifo_256w_8b.qip
 set_global_assignment -name QIP_FILE IP_cores/gpll_i.qip
@@ -144,3 +143,6 @@ set_global_assignment -name VERILOG_FILE source_code/registro_sumador_dinamico.v
 set_global_assignment -name VERILOG_FILE source_code/sumador_3_lanes_TEST.v
 set_global_assignment -name VERILOG_FILE source_code/ventana_pixeles.v
 set_global_assignment -name VERILOG_FILE source_code/ventana_pixeles_TEST.v
+set_global_assignment -name VERILOG_FILE source_code/program_counter.v
+set_global_assignment -name VERILOG_FILE source_code/program_counter_TEST.v
+set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
