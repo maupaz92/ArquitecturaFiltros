@@ -42,7 +42,7 @@ module program_counter_TEST;
 
 
 	initial begin
-	
+		conteo = 0;
 		reset = 0;
 		instruccion_actual = 10;
 		iniciar = 0;
@@ -66,14 +66,17 @@ module program_counter_TEST;
 		for(conteo = 0; conteo < 5; conteo = conteo + 1) begin
 			@(posedge clk);
 			lectura_completada = 1;
+			instruccion_actual = conteo;
 			@(posedge clk);
 			lectura_completada = 0;
-			instruccion_actual = conteo;
 			repeat(2) @(posedge clk);
 		end
 //
-		
-		
+		repeat(3) @(posedge clk);
+		lectura_completada = 1;
+		instruccion_actual = 32'hffff_ffff;
+		@(posedge clk);
+		lectura_completada = 0;
 		//
 		repeat(2) @(posedge clk);
 		
