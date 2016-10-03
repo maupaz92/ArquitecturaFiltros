@@ -13,10 +13,11 @@ ciertos espacios para que puedan escribirse datos en los registros
 
 module control_ventana
 #(
-	parameter BITS_BUS_DATOS_INSTR = 21,
-	parameter BITS_BUS_DIRECCION_INSTR = 11, 
+	parameter BITS_BUS_DATOS_INSTR = 24,
+	parameter BITS_BUS_DIRECCION_INSTR = 8,
+	parameter BITS_DIRECCION_MEM = 10,
 	// cantidad de bits para definir los buffers a utilizar
-	parameter BITS_BUFFERS = 3;
+	parameter BITS_BUFFERS = 3
 )
 (
 	input clk,
@@ -31,7 +32,7 @@ module control_ventana
 
 	
 	//
-	output [BITS_BUS_DATOS_INSTR-1:0] direccion_mem_inicio_imagen,
+	output [BITS_DIRECCION_MEM-1:0] direccion_mem_inicio_imagen,
 	output [BITS_BUS_DATOS_INSTR-1:0]  cantidad_lecturas_mem,
 	output [BITS_BUFFERS-1:0] cantidad_buffers_internos 
 );
@@ -67,11 +68,11 @@ module control_ventana
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_interna_modulos[0]),
-		 .datos_entrada(datos_registros),
+		 .datos_entrada(datos_registros[BITS_DIRECCION_MEM-1:0]),
 		 .datos_salida(direccion_mem_inicio_imagen)
 		 );	
 	
-	defparam ff_direccion_mem_inicio_mem.BITS_EN_REGISTRO = BITS_BUS_DATOS_INSTR;
+	defparam ff_direccion_mem_inicio_mem.BITS_EN_REGISTRO = BITS_DIRECCION_MEM;
 
 	
 	
@@ -103,7 +104,7 @@ module control_ventana
 		 );	
 	
 	// la cantidad de bits debe de definirse mejor
-	defparam ff_columnas_imagen.BITS_EN_REGISTRO = BITS_BUFFERS;	
+	defparam ff_buffers_internos.BITS_EN_REGISTRO = BITS_BUFFERS;	
 	
 	
 
@@ -115,5 +116,5 @@ como inicio?????
 
 
 
-
+endmodule
 

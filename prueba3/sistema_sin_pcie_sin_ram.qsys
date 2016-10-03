@@ -6,7 +6,7 @@
    version="1.0"
    description=""
    tags=""
-   categories="" />
+   categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
    element clk_0
@@ -21,15 +21,46 @@
    {
       datum _sortIndex
       {
-         value = "4";
+         value = "5";
          type = "int";
+      }
+      datum sopceditor_expanded
+      {
+         value = "1";
+         type = "boolean";
+      }
+   }
+   element interfaz_instrucciones
+   {
+      datum _sortIndex
+      {
+         value = "2";
+         type = "int";
+      }
+      datum sopceditor_expanded
+      {
+         value = "1";
+         type = "boolean";
       }
    }
    element interfaz_mascara
    {
       datum _sortIndex
       {
-         value = "2";
+         value = "3";
+         type = "int";
+      }
+      datum sopceditor_expanded
+      {
+         value = "1";
+         type = "boolean";
+      }
+   }
+   element interfaz_qsys_logica
+   {
+      datum _sortIndex
+      {
+         value = "6";
          type = "int";
       }
    }
@@ -37,16 +68,13 @@
    {
       datum _sortIndex
       {
-         value = "3";
+         value = "4";
          type = "int";
       }
-   }
-   element mem_offchip.s1
-   {
-      datum baseAddress
+      datum sopceditor_expanded
       {
-         value = "0";
-         type = "String";
+         value = "1";
+         type = "boolean";
       }
    }
    element mem_onchip
@@ -62,6 +90,14 @@
       datum baseAddress
       {
          value = "0";
+         type = "String";
+      }
+   }
+   element sistema_sin_pcie_sin_ram
+   {
+      datum _originalDeviceFamily
+      {
+         value = "Cyclone IV GX";
          type = "String";
       }
    }
@@ -88,16 +124,12 @@
  <instanceScript></instanceScript>
  <interface name="clk" internal="clk_0.clk_in" type="clock" dir="end" />
  <interface
-   name="interfaz_datos_imagen_control"
-   internal="interfaz_datos_imagen.control"
-   type="conduit"
-   dir="end" />
- <interface
-   name="interfaz_mascara_control"
-   internal="interfaz_mascara.control"
+   name="interfaz_qsys_logica_conduit_general"
+   internal="interfaz_qsys_logica.conduit_general"
    type="conduit"
    dir="end" />
  <interface name="reset" internal="clk_0.clk_in_reset" type="reset" dir="end" />
+ <interface name="varias_signals" internal="interfaz_qsys_logica.conduit_end" />
  <module name="clk_0" kind="clock_source" version="15.1" enabled="1">
   <parameter name="clockFrequency" value="50000000" />
   <parameter name="clockFrequencyKnown" value="true" />
@@ -109,7 +141,15 @@
    kind="avalon_mm_master"
    version="1.0"
    enabled="1">
-  <parameter name="ADDRESS_BITS" value="14" />
+  <parameter name="ADDRESS_BITS" value="16" />
+  <parameter name="DATA_BITS" value="32" />
+ </module>
+ <module
+   name="interfaz_instrucciones"
+   kind="avalon_mm_master"
+   version="1.0"
+   enabled="1">
+  <parameter name="ADDRESS_BITS" value="12" />
   <parameter name="DATA_BITS" value="32" />
  </module>
  <module
@@ -121,12 +161,23 @@
   <parameter name="DATA_BITS" value="32" />
  </module>
  <module
+   name="interfaz_qsys_logica"
+   kind="interfaz_qsys_logica"
+   version="1.0"
+   enabled="1">
+  <parameter name="BITS_ADDR_MEM_OFFCHIP" value="16" />
+  <parameter name="BITS_ADDR_MEM_ONCHIP" value="12" />
+  <parameter name="BITS_BUS_DATOS_INSTR" value="24" />
+  <parameter name="BITS_BUS_DIRECCION_INSTR" value="8" />
+  <parameter name="BITS_MEMORY_DATA" value="32" />
+ </module>
+ <module
    name="mem_offchip"
    kind="altera_avalon_onchip_memory2"
    version="15.1"
    enabled="1">
   <parameter name="allowInSystemMemoryContentEditor" value="false" />
-  <parameter name="autoInitializationFileName">$${FILENAME}_mem_offchip</parameter>
+  <parameter name="autoInitializationFileName">sistema_sin_pcie_sin_ram_mem_offchip</parameter>
   <parameter name="blockType" value="AUTO" />
   <parameter name="copyInitFile" value="false" />
   <parameter name="dataWidth" value="32" />
@@ -137,7 +188,7 @@
   <parameter name="initMemContent" value="true" />
   <parameter name="initializationFileName">C:/Users/Mauricio Paz/Documents/GitHub/ArquitecturaFiltros/prueba3/memoria_ram.mif</parameter>
   <parameter name="instanceID" value="NONE" />
-  <parameter name="memorySize" value="16384" />
+  <parameter name="memorySize" value="65536" />
   <parameter name="readDuringWriteMode" value="DONT_CARE" />
   <parameter name="resetrequest_enabled" value="true" />
   <parameter name="simAllowMRAMContentsFile" value="false" />
@@ -155,7 +206,7 @@
    version="15.1"
    enabled="1">
   <parameter name="allowInSystemMemoryContentEditor" value="false" />
-  <parameter name="autoInitializationFileName">$${FILENAME}_mem_onchip</parameter>
+  <parameter name="autoInitializationFileName">sistema_sin_pcie_sin_ram_mem_onchip</parameter>
   <parameter name="blockType" value="AUTO" />
   <parameter name="copyInitFile" value="false" />
   <parameter name="dataWidth" value="32" />
@@ -190,6 +241,15 @@
  <connection
    kind="avalon"
    version="15.1"
+   start="interfaz_instrucciones.avalon_master"
+   end="mem_onchip.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="15.1"
    start="interfaz_mascara.avalon_master"
    end="mem_onchip.s2">
   <parameter name="arbitrationPriority" value="1" />
@@ -210,6 +270,49 @@
    start="clk_0.clk"
    end="interfaz_mascara.clock" />
  <connection
+   kind="clock"
+   version="15.1"
+   start="clk_0.clk"
+   end="interfaz_qsys_logica.clock" />
+ <connection
+   kind="clock"
+   version="15.1"
+   start="clk_0.clk"
+   end="interfaz_instrucciones.clock" />
+ <connection
+   kind="conduit"
+   version="15.1"
+   start="interfaz_qsys_logica.conduit_imagen"
+   end="interfaz_datos_imagen.control">
+  <parameter name="endPort" value="" />
+  <parameter name="endPortLSB" value="0" />
+  <parameter name="startPort" value="" />
+  <parameter name="startPortLSB" value="0" />
+  <parameter name="width" value="0" />
+ </connection>
+ <connection
+   kind="conduit"
+   version="15.1"
+   start="interfaz_qsys_logica.conduit_instrucciones"
+   end="interfaz_instrucciones.control">
+  <parameter name="endPort" value="" />
+  <parameter name="endPortLSB" value="0" />
+  <parameter name="startPort" value="" />
+  <parameter name="startPortLSB" value="0" />
+  <parameter name="width" value="0" />
+ </connection>
+ <connection
+   kind="conduit"
+   version="15.1"
+   start="interfaz_qsys_logica.conduit_mascara"
+   end="interfaz_mascara.control">
+  <parameter name="endPort" value="" />
+  <parameter name="endPortLSB" value="0" />
+  <parameter name="startPort" value="" />
+  <parameter name="startPortLSB" value="0" />
+  <parameter name="width" value="0" />
+ </connection>
+ <connection
    kind="reset"
    version="15.1"
    start="clk_0.clk_reset"
@@ -219,6 +322,16 @@
    version="15.1"
    start="clk_0.clk_reset"
    end="interfaz_mascara.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="clk_0.clk_reset"
+   end="interfaz_qsys_logica.reset" />
+ <connection
+   kind="reset"
+   version="15.1"
+   start="clk_0.clk_reset"
+   end="interfaz_instrucciones.reset" />
  <connection
    kind="reset"
    version="15.1"

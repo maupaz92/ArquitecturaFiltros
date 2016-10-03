@@ -10,8 +10,8 @@ La seleccion
 
 module control_mascara
 #(
-	parameter BITS_BUS_DATOS_INSTR = 21,
-	parameter BITS_BUS_DIRECCION_INSTR = 11,
+	parameter BITS_BUS_DATOS_INSTR = 24,
+	parameter BITS_BUS_DIRECCION_INSTR = 8,
 	parameter BITS_DIRECCION_MEM = 10,
 	parameter BITS_MASCARA = 3
 )
