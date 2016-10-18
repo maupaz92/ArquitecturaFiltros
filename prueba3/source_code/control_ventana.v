@@ -33,7 +33,7 @@ module control_ventana
 	
 	//
 	output [BITS_DIRECCION_MEM-1:0] direccion_mem_inicio_imagen,
-	output [BITS_BUS_DATOS_INSTR-1:0]  cantidad_lecturas_mem,
+	output [BITS_DIRECCION_MEM-1:0]  cantidad_lecturas_mem,
 	output [BITS_BUFFERS-1:0] cantidad_buffers_internos 
 );
 
@@ -83,12 +83,12 @@ module control_ventana
 		 .clk(clk),
 		 .reset(reset),
 		 .habilitador(habilitacion_interna_modulos[1]),
-		 .datos_entrada(datos_registros),
+		 .datos_entrada(datos_registros[BITS_DIRECCION_MEM-1:0]),
 		 .datos_salida(cantidad_lecturas_mem)
 		 );	
 	
 	// la cantidad de bits debe de definirse mejor
-	defparam ff_cantidad_lecturas_memoria.BITS_EN_REGISTRO = BITS_BUS_DATOS_INSTR;
+	defparam ff_cantidad_lecturas_memoria.BITS_EN_REGISTRO = BITS_DIRECCION_MEM;
 	
 	
 //==========================================================================		

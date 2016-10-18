@@ -13,20 +13,20 @@ el modulo de ventana.
 
 module control_lecturas_mem_externa
 #(
-	parameter BITS_BUS_DATOS_INSTR = 21
+	parameter BITS_DIRECCION_MEM = 24
 )
 (
 	input clk,
 	input reset,
 	input iniciar,
 	input buf_space_available,
-	input [BITS_BUS_DATOS_INSTR-1:0] direccion_mem_inicio_img,
-	input [BITS_BUS_DATOS_INSTR-1:0] lecturas_totales_mem,
+	input [BITS_DIRECCION_MEM-1:0] direccion_mem_inicio_img,
+	input [BITS_DIRECCION_MEM-1:0] lecturas_totales_mem,
 	input lectura_mem_completada,
 	
 	// 
 	output read_mem,
-	output [BITS_BUS_DATOS_INSTR-1:0] address_mem, // el ancho de este bus puede que cambie segun la cantidad de palabras en memoria
+	output [BITS_DIRECCION_MEM-1:0] address_mem, // el ancho de este bus puede que cambie segun la cantidad de palabras en memoria
 	output save_mem_data
 );
 
@@ -45,7 +45,7 @@ module control_lecturas_mem_externa
 	
 	wire contar_lectura;
 	wire continuar_lectura;
-	wire [BITS_BUS_DATOS_INSTR-1:0] cantidad_lecturas;
+	wire [BITS_DIRECCION_MEM-1:0] cantidad_lecturas;
 	wire total_lecturas_completado;
 	
 /*
@@ -68,7 +68,7 @@ de lectura. La cantidad que se le suma a la original depende de la alineacion de
 	
 	// se suma 4 porque la memoria esta alineada a 4 bytes, es de 32bits x palabra
 	defparam direccion_memoria.CANTIDAD_SUMA = 4;
-	defparam direccion_memoria.BITS_DATOS = BITS_BUS_DATOS_INSTR;
+	defparam direccion_memoria.BITS_DATOS = BITS_DIRECCION_MEM;
 
 
 /*
@@ -87,7 +87,7 @@ y se podra saber hay que terminar el proceso
 	);
 	
 	defparam contador_lecturas_memoria.CANTIDAD_SUMA = 1;
-	defparam contador_lecturas_memoria.BITS_DATOS = BITS_BUS_DATOS_INSTR;	
+	defparam contador_lecturas_memoria.BITS_DATOS = BITS_DIRECCION_MEM;	
 
 	
 //==========================================================================	

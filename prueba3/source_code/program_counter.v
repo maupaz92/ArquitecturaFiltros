@@ -16,7 +16,8 @@ module program_counter #(
 	input [TAMANO_INSTRUCCION-1:0] instruccion_actual,
 	// 
 	output leer_siguiente_inst,
-	output [BITS_DIRECCION_MEMORIA-1:0] direccion_siguiente_inst
+	output [BITS_DIRECCION_MEMORIA-1:0] direccion_siguiente_inst,
+	output programa_leido
 );
 
 
@@ -29,7 +30,8 @@ module program_counter #(
 		E_LEER_INST			= 1,
 		E_ESPERA_LECTURA	= 2,
 		E_VERIFICACION		= 3,
-		E_FINAL				= 4;
+		E_COMPLETADO		= 4,
+		E_FINAL				= 5;
 		
 		
 	wire actualizar_direccion_memoria;
@@ -62,9 +64,12 @@ module program_counter #(
 			end
 			E_VERIFICACION: begin
 				if(instruccion_actual == 32'hffff_ffff)
-					e_siguiente = E_FINAL;
+					e_siguiente = E_COMPLETADO;
 				else
 					e_siguiente = E_LEER_INST;
+			end
+			E_COMPLETADO: begin
+				e_siguiente = E_FINAL;
 			end
 			E_FINAL: begin
 				if(reiniciar)
@@ -102,6 +107,7 @@ module program_counter #(
 
 	assign actualizar_direccion_memoria = (e_actual == E_VERIFICACION);
 	assign leer_siguiente_inst = (e_actual == E_LEER_INST);
+	assign programa_leido = (e_actual == E_COMPLETADO);
 	
 	
 
